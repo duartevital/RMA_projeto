@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/graphics/Desktop/projeto/test_reader.cpp" "/home/graphics/Desktop/projeto/build/CMakeFiles/test_reader.dir/test_reader.cpp.o"
+  "/home/graphics/Desktop/RMA/test_reader.cpp" "/home/graphics/Desktop/RMA/build/CMakeFiles/test_reader.dir/test_reader.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

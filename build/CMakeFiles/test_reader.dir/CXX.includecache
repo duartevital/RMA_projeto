@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/graphics/Desktop/projeto/test_reader.cpp
+/home/graphics/Desktop/RMA/test_reader.cpp
 iostream
 -
 fstream

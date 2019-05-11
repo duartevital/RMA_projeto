@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/graphics/Desktop/projeto
+CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/graphics/Desktop/projeto/build
+CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/test_reader.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/test_reader.dir/flags.make
 
 CMakeFiles/test_reader.dir/test_reader.cpp.o: CMakeFiles/test_reader.dir/flags.make
 CMakeFiles/test_reader.dir/test_reader.cpp.o: ../test_reader.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/projeto/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test_reader.dir/test_reader.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test_reader.dir/test_reader.cpp.o -c /home/graphics/Desktop/projeto/test_reader.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test_reader.dir/test_reader.cpp.o -c /home/graphics/Desktop/RMA/test_reader.cpp
 
 CMakeFiles/test_reader.dir/test_reader.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_reader.dir/test_reader.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/graphics/Desktop/projeto/test_reader.cpp > CMakeFiles/test_reader.dir/test_reader.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/graphics/Desktop/RMA/test_reader.cpp > CMakeFiles/test_reader.dir/test_reader.cpp.i
 
 CMakeFiles/test_reader.dir/test_reader.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_reader.dir/test_reader.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/graphics/Desktop/projeto/test_reader.cpp -o CMakeFiles/test_reader.dir/test_reader.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/graphics/Desktop/RMA/test_reader.cpp -o CMakeFiles/test_reader.dir/test_reader.cpp.s
 
 CMakeFiles/test_reader.dir/test_reader.cpp.o.requires:
 .PHONY : CMakeFiles/test_reader.dir/test_reader.cpp.o.requires
@@ -200,6 +200,6 @@ CMakeFiles/test_reader.dir/clean:
 .PHONY : CMakeFiles/test_reader.dir/clean
 
 CMakeFiles/test_reader.dir/depend:
-	cd /home/graphics/Desktop/projeto/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/graphics/Desktop/projeto /home/graphics/Desktop/projeto /home/graphics/Desktop/projeto/build /home/graphics/Desktop/projeto/build /home/graphics/Desktop/projeto/build/CMakeFiles/test_reader.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/graphics/Desktop/RMA/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/graphics/Desktop/RMA /home/graphics/Desktop/RMA /home/graphics/Desktop/RMA/build /home/graphics/Desktop/RMA/build /home/graphics/Desktop/RMA/build/CMakeFiles/test_reader.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/test_reader.dir/depend
 
