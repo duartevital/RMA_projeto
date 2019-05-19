@@ -11,6 +11,8 @@ iostream
 -
 fstream
 -
+vector
+-
 pcl/io/pcd_io.h
 -
 pcl/visualization/cloud_viewer.h
