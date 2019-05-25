@@ -22,7 +22,7 @@ pcl::PointCloud<pcl::PointXYZRGBA>::Ptr table_top_cloud (new pcl::PointCloud<pcl
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_above_plane (new pcl::PointCloud<pcl::PointXYZRGBA>);
 pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
 std::vector<pcl::PointIndices> cluster_indices;
-
+std::string object_str, height_str,  width_str, red_str, green_str, blue_str;
 
 //Alinhamento com os eixos
 void alignWithAxis(){
@@ -30,6 +30,14 @@ void alignWithAxis(){
     double rot_x=-M_PI/6, rot_y=0, rot_z=0;
     Eigen::Affine3f t = pcl::getTransformation(d_x,d_y,d_z, rot_x,rot_y,rot_z);
     pcl::transformPointCloud(*cloud, *cloud, t);
+}
+
+//Voxel Grid
+void setVoxelGrid(){
+    pcl::VoxelGrid<pcl::PointXYZRGBA> vg;
+    vg.setInputCloud(cloud);
+    vg.setLeafSize (0.01f, 0.01f, 0.01f);
+    vg.filter(*cloud);
 }
 
 //Sub-sample
@@ -41,7 +49,7 @@ void setSubSample(){
 }
 
 void filterOutliers(){
-    //Filtrar pontos fora da mesa
+    //Filtrar pontos fora da mesa usando método de clusters
     pcl::PassThrough<pcl::PointXYZRGBA> pass;
     pass.setInputCloud(cloud);
     //Eixo X
@@ -66,6 +74,33 @@ void filterOutliers(){
     sor.setRadiusSearch(0.05);
     sor.setMinNeighborsInRadius(60);
     sor.filter(*cloud);
+
+    /*pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
+    tree->setInputCloud(cloud);
+    std::vector<pcl::PointIndices> indices;
+    pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
+    ec.setClusterTolerance(0.02);
+    ec.setMinClusterSize(10000);
+    ec.setMaxClusterSize(100000);
+    ec.setSearchMethod(tree);
+    ec.setInputCloud(cloud);
+    ec.extract(indices);
+
+    int max_size = 0;
+    for(int i=0; i<indices.size(); i++){
+        pcl::PointCloud<pcl::PointXYZRGBA>::Ptr tmp_cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
+        for(int j=0; j<indices[i].indices.size(); j++){
+            tmp_cloud->points.push_back(cloud->points[indices[i].indices[j]]);
+        }
+        tmp_cloud->width = tmp_cloud->points.size();
+        tmp_cloud->height = 1;
+        tmp_cloud->is_dense = true;
+        if(tmp_cloud->size() > max_size){
+            max_size = tmp_cloud->size();
+            cloud = tmp_cloud;
+        }
+    }*/
+
 }
 
 //Identificação do plano da mesa
@@ -76,7 +111,7 @@ void getTableTop(){
     seg.setOptimizeCoefficients (true);
     seg.setModelType (pcl::SACMODEL_PLANE);
     seg.setMethodType (pcl::SAC_RANSAC);
-    seg.setDistanceThreshold (0.01);
+    seg.setDistanceThreshold (0.001);
     seg.setInputCloud (cloud);
     seg.segment (*inliers, *coefficients);
     extract.setInputCloud(cloud);
@@ -89,7 +124,6 @@ void getTableTop(){
 void getObjectsOnTable(){
     double a = coefficients->values[0]; double b = coefficients->values[1];
     double c = coefficients->values[2]; double d = coefficients->values[3];
-    std::cout << "coeficentes: "<<a<<", "<<b<<", "<<c<<", "<<d<<std::endl;
     for(int i = 0; i<cloud->size(); i++){
         pcl::PointXYZRGBA p = cloud->points[i];
         if(a*p.x+b*p.y+c*p.z+d > 0.01){
@@ -97,11 +131,18 @@ void getObjectsOnTable(){
         }
     }
 
+    //Remoção de outliers
+    pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
+    sor.setInputCloud(cloud_above_plane);
+    sor.setRadiusSearch(0.05);
+    sor.setMinNeighborsInRadius(20);
+    sor.filter(*cloud_above_plane);
+
     pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
     tree->setInputCloud(cloud_above_plane);
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
-    ec.setClusterTolerance(0.02);
-    ec.setMinClusterSize(100);
+    ec.setClusterTolerance(0.03);
+    ec.setMinClusterSize(50);
     ec.setMaxClusterSize(10000);
     ec.setSearchMethod(tree);
     ec.setInputCloud(cloud_above_plane);
@@ -114,18 +155,16 @@ void getObjectsDetails(){
     pcl::PointXYZRGBA max_x_point; pcl::PointXYZRGBA min_x_point; pcl::PointXYZRGBA max_z_point; pcl::PointXYZRGBA min_z_point;
     float highestDistance; float secondHighestDistance;
     std::vector<float> distanceVector;
+
     for(int i=0; i<cluster_indices.size(); i++){
         std::cout << "Cluster size: " << cluster_indices[i].indices.size() << std::endl;
         distanceVector.clear();
-        maxY = 0,
-        minY = 0,
-        maxX = 0,
-        minX = 0,
-        maxZ = 0,
-        minZ = 0;
+        maxY = 0,  minY = 0,   maxX = 0,   minX = 0,   maxZ = 0,   minZ = 0;
+        float red_sum, green_sum, blue_sum;
         highestDistance=0; secondHighestDistance=0;
         for(int j=0; j<cluster_indices[i].indices.size(); j++){
 
+            //Vistas as extremidades dos objetos em X e Z
             if(cloud_above_plane->points[cluster_indices[i].indices[j]].y > maxY || maxY == 0)
                 maxY = cloud_above_plane->points[cluster_indices[i].indices[j]].y;
             if(cloud_above_plane->points[cluster_indices[i].indices[j]].y < minY || minY == 0)
@@ -148,25 +187,46 @@ void getObjectsDetails(){
                 minZ = cloud_above_plane->points[cluster_indices[i].indices[j]].z;
                 min_z_point = cloud_above_plane->points[cluster_indices[i].indices[j]];
             }
+
+            //Guardados valores dos canais R,G, e B
+            red_sum += cloud_above_plane->points[cluster_indices[i].indices[j]].r;
+            green_sum += cloud_above_plane->points[cluster_indices[i].indices[j]].g;
+            blue_sum += cloud_above_plane->points[cluster_indices[i].indices[j]].b;
         }
+        //Calculadas distâncias entre todas as extremidades em X e Z;
         distanceVector.push_back(sqrt(pow(max_x_point.x-min_x_point.x, 2) + pow(max_x_point.z-min_x_point.z, 2)) * 100);
         distanceVector.push_back(sqrt(pow(max_x_point.x-max_z_point.x, 2) + pow(max_x_point.z-max_z_point.z, 2)) * 100);
         distanceVector.push_back(sqrt(pow(max_x_point.x-min_z_point.x, 2) + pow(max_x_point.z-min_z_point.z, 2)) * 100);
         distanceVector.push_back(sqrt(pow(max_z_point.x-min_x_point.x, 2) + pow(max_z_point.z-min_x_point.z, 2)) * 100);
         distanceVector.push_back(sqrt(pow(max_z_point.x-min_z_point.x, 2) + pow(max_z_point.z-min_z_point.z, 2)) * 100);
         distanceVector.push_back(sqrt(pow(min_z_point.x-min_x_point.x, 2) + pow(min_z_point.z-min_x_point.z, 2)) * 100);
+
         for(int k=0; k<distanceVector.size(); k++){
-            //std::cout << "Distancia = " << distanceVector[k] << std::endl;
+            std::cout << "Distancia = " << distanceVector[k] << std::endl;
             if(distanceVector[k] > highestDistance)
                 highestDistance = distanceVector[k];
             else if(distanceVector[k] > secondHighestDistance)
                 secondHighestDistance = distanceVector[k];
         }
         height = sqrt(pow(maxY-minY, 2)) * 100;
-        width = secondHighestDistance;
+        width = highestDistance;
 
-        std::cout << "Object " << i << " height: " << height << std::endl;
+        int red_avg = red_sum / cluster_indices[i].indices.size();
+        int green_avg = green_sum / cluster_indices[i].indices.size();
+        int blue_avg = blue_sum / cluster_indices[i].indices.size();
+
+
+        object_str = "Object " + i + ' ';
+        height_str = height + " ";
+        width_str = width + " ";
+        red_str = red_avg + " ";
+        green_str = green_avg + " ";
+        blue_str = blue_avg;
+        /*std::cout << "Object " << i << " height: " << height << std::endl;
         std::cout << "Object " << i << " width: " << width << std::endl;
+        std::cout << "Object " << i << " average red: " << red_avg << std::endl;
+        std::cout << "Object " << i << " average green: " << green_avg << std::endl;
+        std::cout << "Object " << i << " average blue: " << blue_avg << std::endl;*/
     }
 }
 
@@ -175,10 +235,10 @@ void setOutputFile(){
     ofstream output_file;
     output_file.open("../output_file");
     if(output_file.is_open()){
-        output_file << "lololol. \n";
+        output_file << object_str << height_str << width_str << red_str << green_str << blue_str << "\n";
         output_file.close();
     }
-    else cout << "Unable to open file";
+    else std::cout << "Unable to open file";
 }
 
 
@@ -186,7 +246,7 @@ int main(int argsc, char** argsv){
 
     //Load file to PointCloud
     if(pcl::io::loadPCDFile<pcl::PointXYZRGBA>(argsv[1], *cloud) == -1){
-    //if(pcl::io::loadPCDFile<pcl::PointXYZRGBA>("../clouds/treino/objecto_xicara_branca.pcd", *cloud) == -1){
+    //if(pcl::io::loadPCDFile<pcl::PointXYZRGBA>("../clouds/treino/objecto_livro_azul.pcd", *cloud) == -1){
         PCL_ERROR ("Couldn't read file. \n");
         return(-1);
     }
