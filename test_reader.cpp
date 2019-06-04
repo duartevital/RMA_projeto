@@ -22,7 +22,8 @@ pcl::PointCloud<pcl::PointXYZRGBA>::Ptr table_top_cloud (new pcl::PointCloud<pcl
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_above_plane (new pcl::PointCloud<pcl::PointXYZRGBA>);
 pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
 std::vector<pcl::PointIndices> cluster_indices;
-std::string object_str, height_str,  width_str, red_str, green_str, blue_str;
+std::stringstream object_str, height_str,  width_str, red_str, green_str, blue_str;
+ofstream output_file;
 
 //Alinhamento com os eixos
 void alignWithAxis(){
@@ -162,6 +163,7 @@ void getObjectsDetails(){
         maxY = 0,  minY = 0,   maxX = 0,   minX = 0,   maxZ = 0,   minZ = 0;
         float red_sum, green_sum, blue_sum;
         highestDistance=0; secondHighestDistance=0;
+        pcl::PointXYZRGBA p;
         for(int j=0; j<cluster_indices[i].indices.size(); j++){
 
             //Vistas as extremidades dos objetos em X e Z
@@ -189,9 +191,10 @@ void getObjectsDetails(){
             }
 
             //Guardados valores dos canais R,G, e B
-            red_sum += cloud_above_plane->points[cluster_indices[i].indices[j]].r;
-            green_sum += cloud_above_plane->points[cluster_indices[i].indices[j]].g;
-            blue_sum += cloud_above_plane->points[cluster_indices[i].indices[j]].b;
+            p = cloud_above_plane->points[cluster_indices[i].indices[j]];
+            red_sum += p.r;
+            green_sum += p.g;
+            blue_sum += p.b;
         }
         //Calculadas distâncias entre todas as extremidades em X e Z;
         distanceVector.push_back(sqrt(pow(max_x_point.x-min_x_point.x, 2) + pow(max_x_point.z-min_x_point.z, 2)) * 100);
@@ -202,7 +205,7 @@ void getObjectsDetails(){
         distanceVector.push_back(sqrt(pow(min_z_point.x-min_x_point.x, 2) + pow(min_z_point.z-min_x_point.z, 2)) * 100);
 
         for(int k=0; k<distanceVector.size(); k++){
-            std::cout << "Distancia = " << distanceVector[k] << std::endl;
+            //std::cout << "Distancia = " << distanceVector[k] << std::endl;
             if(distanceVector[k] > highestDistance)
                 highestDistance = distanceVector[k];
             else if(distanceVector[k] > secondHighestDistance)
@@ -216,29 +219,23 @@ void getObjectsDetails(){
         int blue_avg = blue_sum / cluster_indices[i].indices.size();
 
 
-        object_str = "Object " + i + ' ';
-        height_str = height + " ";
-        width_str = width + " ";
-        red_str = red_avg + " ";
-        green_str = green_avg + " ";
-        blue_str = blue_avg;
-        /*std::cout << "Object " << i << " height: " << height << std::endl;
-        std::cout << "Object " << i << " width: " << width << std::endl;
-        std::cout << "Object " << i << " average red: " << red_avg << std::endl;
-        std::cout << "Object " << i << " average green: " << green_avg << std::endl;
-        std::cout << "Object " << i << " average blue: " << blue_avg << std::endl;*/
-    }
-}
+        object_str << "Object " << i << " ";
+        height_str << height << " ";
+        width_str << width << " ";
+        red_str << red_avg << " ";
+        green_str << green_avg << " ";
+        blue_str << blue_avg;
+        std::stringstream output_str;
+        output_str << object_str.str() << height_str.str() << width_str.str() << red_str.str() << green_str.str() << blue_str.str() << "\n";
+        std::cout << output_str.str() << std::endl;
 
-void setOutputFile(){
-    //Write to file
-    ofstream output_file;
-    output_file.open("../output_file");
-    if(output_file.is_open()){
-        output_file << object_str << height_str << width_str << red_str << green_str << blue_str << "\n";
-        output_file.close();
+        if(output_file.is_open()){
+            output_file << output_str.str();
+        }
+
+        output_str.str(""); object_str.str(""); height_str.str(""); width_str.str("");
+        red_str.str(""); green_str.str(""); blue_str.str("");
     }
-    else std::cout << "Unable to open file";
 }
 
 
@@ -252,6 +249,8 @@ int main(int argsc, char** argsv){
     }
     std::cout << "Loaded " << cloud ->width * cloud ->height << " points" <<std::endl;
 
+    output_file.open("../output_file");
+
     alignWithAxis();
     setSubSample();
     filterOutliers();
@@ -259,7 +258,8 @@ int main(int argsc, char** argsv){
     getObjectsOnTable();
     getObjectsDetails();
 
-    setOutputFile();
+
+    output_file.close();
 
     //Setting visualizer
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_red (new pcl::PointCloud<pcl::PointXYZRGBA>);
