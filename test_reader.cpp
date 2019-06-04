@@ -1,3 +1,21 @@
+#include <osg/Camera>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
+#include <osgViewer/Viewer>
+#include <osg/Texture2D>
+#include <osg/MatrixTransform>
+#include <osg/GraphicsContext>
+#include <osg/Depth>
+#include <osg/Material>
+#include <osg/Texture2D>
+#include <osg/PositionAttitudeTransform>
+#include <osg/Geometry>
+#include <osg/Geode>
+#include <osg/BlendFunc>
+#include <osg/AlphaFunc>
+#include <osgGA/GUIEventHandler>
+#include <osg/ShapeDrawable>
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -21,17 +39,11 @@ pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr table_top_cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_above_plane (new pcl::PointCloud<pcl::PointXYZRGBA>);
 pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
+double c_a, c_b, c_c, c_d;
 std::vector<pcl::PointIndices> cluster_indices;
-std::stringstream object_str, height_str,  width_str, red_str, green_str, blue_str;
+std::stringstream object_str, height_str,  width_str, red_str, green_str, blue_str, area_str;
 ofstream output_file;
 
-//Alinhamento com os eixos
-void alignWithAxis(){
-    double d_x=0, d_y=-0.5, d_z=-0.5;
-    double rot_x=-M_PI/6, rot_y=0, rot_z=0;
-    Eigen::Affine3f t = pcl::getTransformation(d_x,d_y,d_z, rot_x,rot_y,rot_z);
-    pcl::transformPointCloud(*cloud, *cloud, t);
-}
 
 //Voxel Grid
 void setVoxelGrid(){
@@ -53,30 +65,23 @@ void filterOutliers(){
     //Filtrar pontos fora da mesa usando método de clusters
     pcl::PassThrough<pcl::PointXYZRGBA> pass;
     pass.setInputCloud(cloud);
-    //Eixo X
+    /*//Eixo X
     pass.setFilterFieldName("x");
     pass.setFilterLimitsNegative(false);
-    pass.setFilterLimits(-0.4, 0.4);
+    pass.setFilterLimits(-1, 1);
     pass.filter(*cloud);
     //Eixo Y
     pass.setFilterFieldName("y");
     pass.setFilterLimitsNegative(false);
-    pass.setFilterLimits(-0.4, 0.5);
+    pass.setFilterLimits(-1, 1);
     pass.filter(*cloud);
     //Eixo Z
     pass.setFilterFieldName("z");
     pass.setFilterLimitsNegative(false);
-    pass.setFilterLimits(-0.1, 1);
+    pass.setFilterLimits(-1, 1.5);*/
     pass.filter(*cloud);
 
-    //Remoção de outliers
-    pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
-    sor.setInputCloud(cloud);
-    sor.setRadiusSearch(0.05);
-    sor.setMinNeighborsInRadius(60);
-    sor.filter(*cloud);
-
-    /*pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
+    pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
     tree->setInputCloud(cloud);
     std::vector<pcl::PointIndices> indices;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
@@ -100,7 +105,14 @@ void filterOutliers(){
             max_size = tmp_cloud->size();
             cloud = tmp_cloud;
         }
-    }*/
+    }
+
+    //Remoção de outliers
+    pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
+    sor.setInputCloud(cloud);
+    sor.setRadiusSearch(0.04);
+    sor.setMinNeighborsInRadius(60);
+    sor.filter(*cloud);
 
 }
 
@@ -121,13 +133,37 @@ void getTableTop(){
     extract.filter (*table_top_cloud);
 }
 
+void alignPointCloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ex_cloud){
+    double pitch, roll, height;
+    double norm = sqrt(c_a*c_a+c_b*c_b+c_c*c_c);
+    c_a = c_a/norm;
+    c_b = c_b/norm;
+    c_c = c_c/norm;
+
+    if (c_c<0){
+        c_a*=-1; c_b*=-1; c_c*=-1;
+    }
+
+    pitch = asin(c_c);
+    roll = -acos(c_b/cos(pitch));
+    height = fabs(c_d);
+
+    if (c_a<0)
+        (roll) *= -1;
+
+    Eigen::Affine3f t1 = pcl::getTransformation (0.0, -height, 0.0, 0.0, 0.0, 0);
+    Eigen::Affine3f t2 = pcl::getTransformation (0.0, 0.0, 0.0, -pitch, 0.0, 0.0);
+    Eigen::Affine3f t3 = pcl::getTransformation (0.0, 0.0, 0.0, 0.0, 0.0, -roll);
+    pcl::transformPointCloud(*ex_cloud, *ex_cloud, t1*t2*t3);
+}
+
 //Identificação dos pontos acima do plano da mesa e isolar objetos
 void getObjectsOnTable(){
-    double a = coefficients->values[0]; double b = coefficients->values[1];
-    double c = coefficients->values[2]; double d = coefficients->values[3];
+    c_a = coefficients->values[0]; c_b = coefficients->values[1];
+    c_c = coefficients->values[2]; c_d = coefficients->values[3];
     for(int i = 0; i<cloud->size(); i++){
         pcl::PointXYZRGBA p = cloud->points[i];
-        if(a*p.x+b*p.y+c*p.z+d > 0.01){
+        if(c_a*p.x+c_b*p.y+c_c*p.z+c_d > 0.01){
             cloud_above_plane->push_back(p);
         }
     }
@@ -139,6 +175,7 @@ void getObjectsOnTable(){
     sor.setMinNeighborsInRadius(20);
     sor.filter(*cloud_above_plane);
 
+    //Separar clusters
     pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
     tree->setInputCloud(cloud_above_plane);
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
@@ -158,10 +195,9 @@ void getObjectsDetails(){
     std::vector<float> distanceVector;
 
     for(int i=0; i<cluster_indices.size(); i++){
-        std::cout << "Cluster size: " << cluster_indices[i].indices.size() << std::endl;
         distanceVector.clear();
         maxY = 0,  minY = 0,   maxX = 0,   minX = 0,   maxZ = 0,   minZ = 0;
-        float red_sum, green_sum, blue_sum;
+        float red_sum=0, green_sum=0, blue_sum=0;
         highestDistance=0; secondHighestDistance=0;
         pcl::PointXYZRGBA p;
         for(int j=0; j<cluster_indices[i].indices.size(); j++){
@@ -205,7 +241,6 @@ void getObjectsDetails(){
         distanceVector.push_back(sqrt(pow(min_z_point.x-min_x_point.x, 2) + pow(min_z_point.z-min_x_point.z, 2)) * 100);
 
         for(int k=0; k<distanceVector.size(); k++){
-            //std::cout << "Distancia = " << distanceVector[k] << std::endl;
             if(distanceVector[k] > highestDistance)
                 highestDistance = distanceVector[k];
             else if(distanceVector[k] > secondHighestDistance)
@@ -217,6 +252,7 @@ void getObjectsDetails(){
         int red_avg = red_sum / cluster_indices[i].indices.size();
         int green_avg = green_sum / cluster_indices[i].indices.size();
         int blue_avg = blue_sum / cluster_indices[i].indices.size();
+        int area_sum = cluster_indices[i].indices.size();
 
 
         object_str << "Object " << i << " ";
@@ -224,9 +260,10 @@ void getObjectsDetails(){
         width_str << width << " ";
         red_str << red_avg << " ";
         green_str << green_avg << " ";
-        blue_str << blue_avg;
+        blue_str << blue_avg << " ";
+        area_str << area_sum;
         std::stringstream output_str;
-        output_str << object_str.str() << height_str.str() << width_str.str() << red_str.str() << green_str.str() << blue_str.str() << "\n";
+        output_str << object_str.str() << height_str.str() << width_str.str() << red_str.str() << green_str.str() << blue_str.str() << area_str.str() << "\n";
         std::cout << output_str.str() << std::endl;
 
         if(output_file.is_open()){
@@ -234,7 +271,7 @@ void getObjectsDetails(){
         }
 
         output_str.str(""); object_str.str(""); height_str.str(""); width_str.str("");
-        red_str.str(""); green_str.str(""); blue_str.str("");
+        red_str.str(""); green_str.str(""); blue_str.str(""); area_str.str("");
     }
 }
 
@@ -251,11 +288,13 @@ int main(int argsc, char** argsv){
 
     output_file.open("../output_file");
 
-    alignWithAxis();
+    //setVoxelGrid();
+    //alignWithAxis();
     setSubSample();
     filterOutliers();
     getTableTop();
     getObjectsOnTable();
+    alignPointCloud(cloud); alignPointCloud(cloud_above_plane); alignPointCloud(table_top_cloud);
     getObjectsDetails();
 
 
@@ -265,15 +304,15 @@ int main(int argsc, char** argsv){
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_red (new pcl::PointCloud<pcl::PointXYZRGBA>);
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_blue (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
-    //cloud_red = table_top_cloud;
+    cloud_red = table_top_cloud;
     cloud_blue = cloud_above_plane;
 
     pcl::visualization::PCLVisualizer *viewer = new pcl::visualization::PCLVisualizer("3D Viewer");
     viewer->setBackgroundColor(0,0,0);
 
-    /*viewer->addPointCloud<pcl::PointXYZRGBA> (cloud_red, "red cloud");
+    viewer->addPointCloud<pcl::PointXYZRGBA> (cloud_red, "red cloud");
     viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "red cloud");
-    viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_COLOR, 255,0,0, "red cloud");*/
+    viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_COLOR, 255,0,0, "red cloud");
     viewer->addPointCloud<pcl::PointXYZRGBA> (cloud_blue, "blue cloud");
     viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "blue cloud");
     viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_COLOR, 0,0,255, "blue cloud");

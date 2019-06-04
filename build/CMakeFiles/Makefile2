@@ -47,10 +47,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/graphics/Desktop/projeto
+CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/graphics/Desktop/projeto/build
+CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/build
 
 #=============================================================================
 # Target rules for target CMakeFiles/test_reader.dir
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/graphics/Desktop/projeto/build
 CMakeFiles/test_reader.dir/all:
 	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/depend
 	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/projeto/build/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/build/CMakeFiles  1
 	@echo "Built target test_reader"
 .PHONY : CMakeFiles/test_reader.dir/all
 
@@ -69,9 +69,9 @@ all: CMakeFiles/test_reader.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_reader.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/projeto/build/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/build/CMakeFiles 1
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test_reader.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/projeto/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/build/CMakeFiles 0
 .PHONY : CMakeFiles/test_reader.dir/rule
 
 # Convenience name for target.
