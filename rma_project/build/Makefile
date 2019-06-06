@@ -39,10 +39,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA
+CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA/rma_project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/build
+CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/rma_project/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -69,9 +69,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/build/CMakeFiles /home/graphics/Desktop/RMA/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -99,41 +99,41 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test_reader
+# Target rules for targets named main
 
 # Build rule for target.
-test_reader: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_reader
-.PHONY : test_reader
+main: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 main
+.PHONY : main
 
 # fast build rule for target.
-test_reader/fast:
-	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/build
-.PHONY : test_reader/fast
+main/fast:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
 
-test_reader.o: test_reader.cpp.o
-.PHONY : test_reader.o
+main.o: main.cpp.o
+.PHONY : main.o
 
 # target to build an object file
-test_reader.cpp.o:
-	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/test_reader.cpp.o
-.PHONY : test_reader.cpp.o
+main.cpp.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.o
+.PHONY : main.cpp.o
 
-test_reader.i: test_reader.cpp.i
-.PHONY : test_reader.i
+main.i: main.cpp.i
+.PHONY : main.i
 
 # target to preprocess a source file
-test_reader.cpp.i:
-	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/test_reader.cpp.i
-.PHONY : test_reader.cpp.i
+main.cpp.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.i
+.PHONY : main.cpp.i
 
-test_reader.s: test_reader.cpp.s
-.PHONY : test_reader.s
+main.s: main.cpp.s
+.PHONY : main.s
 
 # target to generate assembly for a file
-test_reader.cpp.s:
-	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/test_reader.cpp.s
-.PHONY : test_reader.cpp.s
+main.cpp.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
+.PHONY : main.cpp.s
 
 # Help Target
 help:
@@ -142,11 +142,11 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... main"
 	@echo "... rebuild_cache"
-	@echo "... test_reader"
-	@echo "... test_reader.o"
-	@echo "... test_reader.i"
-	@echo "... test_reader.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 .PHONY : help
 
 

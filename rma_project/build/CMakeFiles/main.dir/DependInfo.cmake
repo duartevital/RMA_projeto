@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/graphics/Desktop/RMA/test_reader.cpp" "/home/graphics/Desktop/RMA/build/CMakeFiles/test_reader.dir/test_reader.cpp.o"
+  "/home/graphics/Desktop/RMA/rma_project/main.cpp" "/home/graphics/Desktop/RMA/rma_project/build/CMakeFiles/main.dir/main.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -12,10 +12,6 @@ SET(CMAKE_CXX_COMPILER_ID "GNU")
 SET(CMAKE_TARGET_DEFINITIONS
   "DISABLE_PCAP"
   "DISABLE_PNG"
-  "EIGEN_USE_NEW_STDVECTOR"
-  "EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET"
-  "FLANN_STATIC"
-  "qh_QHpointer"
   )
 
 # Targets to which this target links.

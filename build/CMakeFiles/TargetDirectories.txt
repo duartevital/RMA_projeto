@@ -1,1 +1,0 @@
-/home/graphics/Desktop/RMA/build/CMakeFiles/test_reader.dir

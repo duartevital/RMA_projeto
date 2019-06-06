@@ -47,44 +47,44 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA
+CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA/rma_project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/build
+CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/rma_project/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/test_reader.dir
+# Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
-CMakeFiles/test_reader.dir/all:
-	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/depend
-	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/build/CMakeFiles  1
-	@echo "Built target test_reader"
-.PHONY : CMakeFiles/test_reader.dir/all
+CMakeFiles/main.dir/all:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles  1
+	@echo "Built target main"
+.PHONY : CMakeFiles/main.dir/all
 
 # Include target in all.
-all: CMakeFiles/test_reader.dir/all
+all: CMakeFiles/main.dir/all
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/test_reader.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/build/CMakeFiles 1
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test_reader.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/build/CMakeFiles 0
-.PHONY : CMakeFiles/test_reader.dir/rule
+CMakeFiles/main.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/main.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles 0
+.PHONY : CMakeFiles/main.dir/rule
 
 # Convenience name for target.
-test_reader: CMakeFiles/test_reader.dir/rule
-.PHONY : test_reader
+main: CMakeFiles/main.dir/rule
+.PHONY : main
 
 # clean rule for target.
-CMakeFiles/test_reader.dir/clean:
-	$(MAKE) -f CMakeFiles/test_reader.dir/build.make CMakeFiles/test_reader.dir/clean
-.PHONY : CMakeFiles/test_reader.dir/clean
+CMakeFiles/main.dir/clean:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/clean
+.PHONY : CMakeFiles/main.dir/clean
 
 # clean rule for target.
-clean: CMakeFiles/test_reader.dir/clean
+clean: CMakeFiles/main.dir/clean
 .PHONY : clean
 
 #=============================================================================
