@@ -99,6 +99,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named ObjectDetails
+
+# Build rule for target.
+ObjectDetails: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ObjectDetails
+.PHONY : ObjectDetails
+
+# fast build rule for target.
+ObjectDetails/fast:
+	$(MAKE) -f CMakeFiles/ObjectDetails.dir/build.make CMakeFiles/ObjectDetails.dir/build
+.PHONY : ObjectDetails/fast
+
+#=============================================================================
 # Target rules for targets named main
 
 # Build rule for target.
@@ -110,6 +123,30 @@ main: cmake_check_build_system
 main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
+
+ObjectDetails.o: ObjectDetails.cpp.o
+.PHONY : ObjectDetails.o
+
+# target to build an object file
+ObjectDetails.cpp.o:
+	$(MAKE) -f CMakeFiles/ObjectDetails.dir/build.make CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o
+.PHONY : ObjectDetails.cpp.o
+
+ObjectDetails.i: ObjectDetails.cpp.i
+.PHONY : ObjectDetails.i
+
+# target to preprocess a source file
+ObjectDetails.cpp.i:
+	$(MAKE) -f CMakeFiles/ObjectDetails.dir/build.make CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.i
+.PHONY : ObjectDetails.cpp.i
+
+ObjectDetails.s: ObjectDetails.cpp.s
+.PHONY : ObjectDetails.s
+
+# target to generate assembly for a file
+ObjectDetails.cpp.s:
+	$(MAKE) -f CMakeFiles/ObjectDetails.dir/build.make CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.s
+.PHONY : ObjectDetails.cpp.s
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -141,9 +178,13 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... ObjectDetails"
 	@echo "... edit_cache"
 	@echo "... main"
 	@echo "... rebuild_cache"
+	@echo "... ObjectDetails.o"
+	@echo "... ObjectDetails.i"
+	@echo "... ObjectDetails.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

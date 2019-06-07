@@ -53,13 +53,48 @@ CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA/rma_project
 CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/rma_project/build
 
 #=============================================================================
+# Target rules for target CMakeFiles/ObjectDetails.dir
+
+# All Build rule for target.
+CMakeFiles/ObjectDetails.dir/all:
+	$(MAKE) -f CMakeFiles/ObjectDetails.dir/build.make CMakeFiles/ObjectDetails.dir/depend
+	$(MAKE) -f CMakeFiles/ObjectDetails.dir/build.make CMakeFiles/ObjectDetails.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles  1
+	@echo "Built target ObjectDetails"
+.PHONY : CMakeFiles/ObjectDetails.dir/all
+
+# Include target in all.
+all: CMakeFiles/ObjectDetails.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/ObjectDetails.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/ObjectDetails.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles 0
+.PHONY : CMakeFiles/ObjectDetails.dir/rule
+
+# Convenience name for target.
+ObjectDetails: CMakeFiles/ObjectDetails.dir/rule
+.PHONY : ObjectDetails
+
+# clean rule for target.
+CMakeFiles/ObjectDetails.dir/clean:
+	$(MAKE) -f CMakeFiles/ObjectDetails.dir/build.make CMakeFiles/ObjectDetails.dir/clean
+.PHONY : CMakeFiles/ObjectDetails.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/ObjectDetails.dir/clean
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
 CMakeFiles/main.dir/all:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles  2
 	@echo "Built target main"
 .PHONY : CMakeFiles/main.dir/all
 

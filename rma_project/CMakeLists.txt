@@ -21,8 +21,10 @@ macro( config_project PROJNAME LIBNAME )
 endmacro()
 
 add_executable(main main.cpp)
+add_executable(ObjectDetails ObjectDetails.cpp)
 
 target_link_libraries( main ${PCL_LIBRARIES} )
+target_link_libraries( ObjectDetails ${PCL_LIBRARIES} )
 
 config_project(main PCL)
 config_project(main OPENTHREADS )
@@ -36,3 +38,5 @@ config_project(main OSGTEXT )
 config_project(main OSGGA )
 config_project(main GLUT )
 config_project(main OPENGL )
+
+config_project(ObjectDetails PCL)

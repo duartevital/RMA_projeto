@@ -53,14 +53,6 @@ std::stringstream object_str, height_str,  width_str, red_str, green_str, blue_s
 ofstream output_file;
 
 
-//Voxel Grid
-void setVoxelGrid(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr tmp){
-    pcl::VoxelGrid<pcl::PointXYZRGBA> vg;
-    vg.setInputCloud(tmp);
-    vg.setLeafSize (0.01f, 0.01f, 0.01f);
-    vg.filter(*tmp);
-}
-
 //Sub-sample
 void setSubSample(){
     pcl::VoxelGrid<pcl::PointXYZRGBA> vg;
@@ -99,8 +91,6 @@ void filterOutliers(){
     ec.setSearchMethod(tree);
     ec.setInputCloud(cloud);
     ec.extract(indices);
-
-    std::cout << "indices size = " << indices.size() << std::endl;
 
     int max_size = 0;
     for(int i=0; i<indices.size(); i++){
@@ -181,21 +171,29 @@ void getObjectsOnTable(){
     //Remoção de outliers
     pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
     sor.setInputCloud(cloud_above_plane);
-    sor.setRadiusSearch(0.05);
-    sor.setMinNeighborsInRadius(20);
+    sor.setRadiusSearch(0.04);
+    sor.setMinNeighborsInRadius(18);
     sor.filter(*cloud_above_plane);
-    setVoxelGrid(cloud_above_plane);
 
     //Separar clusters
     pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
     tree->setInputCloud(cloud_above_plane);
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
-    ec.setClusterTolerance(0.03);
-    ec.setMinClusterSize(50);
+    ec.setClusterTolerance(0.015);
+    ec.setMinClusterSize(30);
     ec.setMaxClusterSize(10000);
     ec.setSearchMethod(tree);
     ec.setInputCloud(cloud_above_plane);
     ec.extract(cluster_indices);
+}
+
+void getObjectType(int height, int width, int red, int green, int blue, int area){
+    std::string obj_type, color;
+
+    if(height > 20)
+        obj_type = "Livro";
+
+    object_str << obj_type << " ";
 }
 
 void getObjectsDetails(){
@@ -266,7 +264,8 @@ void getObjectsDetails(){
         int area_sum = cluster_indices[i].indices.size();
 
 
-        object_str << "Object " << i << " ";
+        getObjectType(height, width, red_avg, green_avg, blue_avg, area_sum);
+        //object_str << "Object " << i << " ";
         height_str << height << " ";
         width_str << width << " ";
         red_str << red_avg << " ";
@@ -277,65 +276,14 @@ void getObjectsDetails(){
         output_str << object_str.str() << height_str.str() << width_str.str() << red_str.str() << green_str.str() << blue_str.str() << area_str.str() << "\n";
         std::cout << output_str.str() << std::endl;
 
-        if(output_file.is_open()){
-            output_file << output_str.str();
-        }
-
         output_str.str(""); object_str.str(""); height_str.str(""); width_str.str("");
         red_str.str(""); green_str.str(""); blue_str.str(""); area_str.str("");
     }
 }
 
-osg::Camera* createHUDCamera( double left, double right, double bottom, double top){
-    osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-    camera->setReferenceFrame( osg::Camera::ABSOLUTE_RF );
-    camera->setClearMask( GL_DEPTH_BUFFER_BIT );
-    camera->setRenderOrder( osg::Camera::POST_RENDER, 2);
-    camera->setProjectionMatrix( osg::Matrix::ortho2D(left, right, bottom, top));
-    return camera.release();
-}
-
-osgText::Text* createText(osg::Vec3 pos, std::string content, float size){
-    //osg::ref_ptr<osgText::Font> g_font = osgText::readFontFile("fonts/arial.ttf");
-    osg::ref_ptr<osgText::Text> text = new osgText::Text;
-    //text->setFont( g_font.get() );
-    text->setCharacterSize(size);
-    text->setPosition(pos);
-    text->setText(content);
-    text->setDataVariance(osg::Object::DYNAMIC);
-    return text.release();
-}
-
-std::string getRandomQuestion(){
-    std::vector<std::string> question_vec;
-
-    std::string q1 = "Selecciona um objeto à direita/esquerda do objeto pré-seleccionado.";
-    std::string q2 = "Selecciona o objeto mais próximo/afastado do objeto pré-seleccionado.";
-    std::string q3 = "Selecciona o objeto com maior/menor superfície";
-    std::string q4 = "Selecciona o objeto mais alto/baixo";
-    std::string q5 = "Selecciona o objeto mais largo/estreito";
-    std::string q6 = "Seleciona um objeto mais escuro/claro do que o objeto pré-seleccionado";
-    std::string q7 = "Selecciona o objeto do tipo X";
-    question_vec.push_back(q1); question_vec.push_back(q2); question_vec.push_back(q3);
-    question_vec.push_back(q4); question_vec.push_back(q5); question_vec.push_back(q6);
-    question_vec.push_back(q7);
-
-    int r = rand() % 7;
-    return question_vec[r];
-}
 
 void analyze(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr arg_cloud){
     cloud = arg_cloud;
-
-    //Load file to PointCloud
-    /*if(pcl::io::loadPCDFile<pcl::PointXYZRGBA>(argsv[1], *cloud) == -1){
-    //if(pcl::io::loadPCDFile<pcl::PointXYZRGBA>("../clouds/treino/objecto_livro_azul.pcd", *cloud) == -1){
-        PCL_ERROR ("Couldn't read file. \n");
-        return(-1);
-    }
-    std::cout << "Loaded " << cloud ->width * cloud ->height << " points" <<std::endl;*/
-
-    output_file.open("../output_file");
 
     setSubSample();
     filterOutliers();
@@ -343,55 +291,5 @@ void analyze(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr arg_cloud){
     getObjectsOnTable();
     alignPointCloud(cloud); alignPointCloud(cloud_above_plane); alignPointCloud(table_top_cloud);
     getObjectsDetails();
-
-
-    output_file.close();
-
-    //Setting clouds
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_red (new pcl::PointCloud<pcl::PointXYZRGBA>);
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_blue (new pcl::PointCloud<pcl::PointXYZRGBA>);
-
-    cloud_red = cloud;
-    cloud_blue = cloud_above_plane;
-
-
-    //Setting PCL Visualizer
-    pcl::visualization::PCLVisualizer *viewerPCL = new pcl::visualization::PCLVisualizer("3D Viewer");
-    viewerPCL->setBackgroundColor(0,0,0);
-
-    viewerPCL->addPointCloud<pcl::PointXYZRGBA> (cloud_red, "red cloud");
-    viewerPCL->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "red cloud");
-    viewerPCL->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_COLOR, 255,0,0, "red cloud");
-    /*viewer->addPointCloud<pcl::PointXYZRGBA> (cloud_blue, "blue cloud");
-    viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "blue cloud");
-    viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_COLOR, 0,0,255, "blue cloud");*/
-
-    viewerPCL->addCoordinateSystem(1.0);
-    viewerPCL->initCameraParameters();
-
-    //Setting HUD text and camera
-    osg::ref_ptr<osg::Geode> textGeode = new osg::Geode;
-    osgText::Text* question_txt = createText(osg::Vec3(50.0f, 650.0f, 0.0f), getRandomQuestion(), 20.0f);
-    textGeode->addDrawable(question_txt);
-
-    osg::Camera* hud_camera = createHUDCamera(0, 1024, 0, 768);
-    hud_camera->addChild(textGeode.get());
-    hud_camera->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-
-    //Setting OSG Visualizer
-    osg::ref_ptr<osg::Group> root = new osg::Group;
-    root->addChild( hud_camera);
-
-    osgViewer::Viewer viewerOSG;
-    viewerOSG.setUpViewInWindow(0, 0, 640, 480);
-    viewerOSG.setSceneData( root.get() );
-
-    while (!viewerPCL->wasStopped ())
-    {
-        viewerPCL->spinOnce (100);
-        viewerOSG.frame();
-        boost::this_thread::sleep (boost::posix_time::microseconds (100000));
-
-    }
 
 }

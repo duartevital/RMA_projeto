@@ -1,1 +1,2 @@
+/home/graphics/Desktop/RMA/rma_project/build/CMakeFiles/ObjectDetails.dir
 /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles/main.dir
