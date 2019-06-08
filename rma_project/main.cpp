@@ -1,8 +1,8 @@
 using namespace std;
 
-#include "TestDetails.cpp"
 #include "Object.cpp"
 #include "Game.cpp"
+#include "TestDetails.cpp"
 
 int main(int argsc, char** argsv)
 {
@@ -16,8 +16,8 @@ int main(int argsc, char** argsv)
     std::cout << "Loaded " << cloud ->width * cloud ->height << " points" <<std::endl;
 
 
+    //getObjectsInFile();
     analyze(cloud);
-    getObjectsInFile();
 
 
     //Setting clouds

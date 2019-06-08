@@ -28,7 +28,6 @@
 #include <stdlib.h>
 
 //std::vector<Object> objects_in_file;
-std::vector<Object> objects_in_file;
 
 osg::Camera* createHUDCamera( double left, double right, double bottom, double top){
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
@@ -64,37 +63,7 @@ std::string getRandomQuestion(){
     question_vec.push_back(q4); question_vec.push_back(q5); question_vec.push_back(q6);
     question_vec.push_back(q7);
 
-    std::cout << "size " << question_vec.size();
     int r = rand() % question_vec.size();
     return question_vec[r];
 }
 
-
-void getObjectsInFile(){
-    std::string line("");
-    std::string delimiter(" ");
-    ifstream file("../output_file");
-    if(file.is_open()){
-        while( getline(file, line) && !line.empty()){
-            int pos=0;
-            std::vector<std::string> token_list;
-            while((pos = line.find(delimiter)) != std::string::npos){
-                token_list.push_back(line.substr(0, pos));
-                line.erase(0, pos+delimiter.length());
-            }
-            std::string type = token_list[0]; std::string color = token_list[1];
-            int height = atoi(token_list[2].c_str()); int width = atoi(token_list[3].c_str());
-            int red = atoi(token_list[4].c_str()); int green = atoi(token_list[5].c_str()); int blue = atoi(token_list[6].c_str());
-            int area = atoi(token_list[7].c_str());
-
-            Object obj(type, color, height, width, red, green, blue, area);
-            objects_in_file.push_back(obj);
-        }
-        file.close();
-    }else
-        std::cout << "Unable to open file" << std::endl;
-
-    for(int i=0; i<objects_in_file.size(); i++){
-        std::cout << objects_in_file[i].getType() << std::endl;
-    }
-}

@@ -282,6 +282,5 @@ int main(){
         getObjectsDetails(i);
     }
 
-
     output_file.close();
 }

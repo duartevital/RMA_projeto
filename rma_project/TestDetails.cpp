@@ -24,6 +24,8 @@
 #include <osgText/Font>
 #include <osgText/Text>
 
+#include <string>
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -49,9 +51,78 @@ pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_above_plane (new pcl::PointCloud<p
 pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
 double c_a, c_b, c_c, c_d;
 std::vector<pcl::PointIndices> cluster_indices;
-std::stringstream object_str, height_str,  width_str, red_str, green_str, blue_str, area_str;
 ofstream output_file;
+std::vector<Object> objects_in_file;
+std::vector<Object> objects_in_cloud;
+int max_area = 0;
 
+//Guardar em objects_on_file os objectos no txt
+void getObjectsInFile(){
+    std::string line("");
+    std::string delimiter(" ");
+    ifstream file("../output_file");
+    if(file.is_open()){
+        while( getline(file, line) && !line.empty()){
+            int pos=0;
+            std::vector<std::string> token_list;
+            while((pos = line.find(delimiter)) != std::string::npos){
+                token_list.push_back(line.substr(0, pos));
+                line.erase(0, pos+delimiter.length());
+            }
+            std::string type = token_list[0]; std::string color = token_list[1];
+            int height = atoi(token_list[2].c_str()); int width = atoi(token_list[3].c_str());
+            int red = atoi(token_list[4].c_str()); int green = atoi(token_list[5].c_str()); int blue = atoi(token_list[6].c_str());
+            int area = atoi(token_list[7].c_str());
+
+            Object obj(type, color, height, width, red, green, blue, area);
+            objects_in_file.push_back(obj);
+        }
+        file.close();
+    }else
+        std::cout << "Unable to open file" << std::endl;
+}
+
+float getEuclideanDistance(pcl::PointXYZRGBA p1, pcl::PointXYZRGBA p2){
+    return sqrt(pow(p1.x-p2.x, 2) + pow(p1.z-p2.z, 2)) * 100;
+}
+
+void setObjectType(){
+    for(int i=0; i<objects_in_cloud.size(); i++){
+        //Variables in cloud
+        int height1=objects_in_cloud[i].getHeight(), width1=objects_in_cloud[i].getWidth();
+        int red1=objects_in_cloud[i].getRed(), green1=objects_in_cloud[i].getGreen(), blue1=objects_in_cloud[i].getBlue();
+        int area1=objects_in_cloud[i].getArea();
+
+        //Variables in txt file
+        int height2=0, width2=0;
+        int red2=0, green2=0, blue2=0;
+        int area2=0;
+
+        float distance = 10000;
+
+        for(int j=0; j<objects_in_file.size(); j++){
+            height2 = objects_in_file[j].getHeight(); width2 = objects_in_file[j].getWidth();
+            red2 = objects_in_file[j].getRed(); green2 = objects_in_file[j].getGreen(); blue2 = objects_in_file[j].getBlue();
+            area2 = objects_in_file[j].getArea();
+
+            int height_count = pow(height1-height2, 2), width_count = pow(width1-width2, 2);
+            float red_count = pow(red1-red2, 2)/255, green_count = pow(green1-green2, 2)/255, blue_count = pow(blue1-blue2, 2)/255;
+            int area_count = pow(area1-area2, 2)/max_area;
+            float count_sum = height_count + width_count + red_count + green_count + blue_count + area_count;
+            float tmp_distance = sqrt(count_sum);
+
+            if(distance > tmp_distance){
+                distance = tmp_distance;
+                objects_in_cloud[i].setType(objects_in_file[j].getType());
+                objects_in_cloud[i].setColor(objects_in_file[j].getColor());
+            }
+            std::cout << "distance = " << tmp_distance << std::endl;
+            std::cout << "Type = " << objects_in_file[j].getType() << std::endl;
+            std::cout << "Color = " << objects_in_file[j].getColor() << std::endl;
+        }
+        std::cout << "\n" << std::endl;
+    }
+}
 
 //Sub-sample
 void setSubSample(){
@@ -187,15 +258,6 @@ void getObjectsOnTable(){
     ec.extract(cluster_indices);
 }
 
-void getObjectType(int height, int width, int red, int green, int blue, int area){
-    std::string obj_type, color;
-
-    if(height > 20)
-        obj_type = "Livro";
-
-    object_str << obj_type << " ";
-}
-
 void getObjectsDetails(){
     float maxY, minY, maxX, minX, maxZ, minZ;
     int height, width;
@@ -242,12 +304,12 @@ void getObjectsDetails(){
             blue_sum += p.b;
         }
         //Calculadas distâncias entre todas as extremidades em X e Z;
-        distanceVector.push_back(sqrt(pow(max_x_point.x-min_x_point.x, 2) + pow(max_x_point.z-min_x_point.z, 2)) * 100);
-        distanceVector.push_back(sqrt(pow(max_x_point.x-max_z_point.x, 2) + pow(max_x_point.z-max_z_point.z, 2)) * 100);
-        distanceVector.push_back(sqrt(pow(max_x_point.x-min_z_point.x, 2) + pow(max_x_point.z-min_z_point.z, 2)) * 100);
-        distanceVector.push_back(sqrt(pow(max_z_point.x-min_x_point.x, 2) + pow(max_z_point.z-min_x_point.z, 2)) * 100);
-        distanceVector.push_back(sqrt(pow(max_z_point.x-min_z_point.x, 2) + pow(max_z_point.z-min_z_point.z, 2)) * 100);
-        distanceVector.push_back(sqrt(pow(min_z_point.x-min_x_point.x, 2) + pow(min_z_point.z-min_x_point.z, 2)) * 100);
+        distanceVector.push_back(getEuclideanDistance(max_x_point, min_x_point));
+        distanceVector.push_back(getEuclideanDistance(max_x_point, max_z_point));
+        distanceVector.push_back(getEuclideanDistance(max_x_point, min_z_point));
+        distanceVector.push_back(getEuclideanDistance(max_z_point, min_x_point));
+        distanceVector.push_back(getEuclideanDistance(max_z_point, min_z_point));
+        distanceVector.push_back(getEuclideanDistance(min_z_point, min_x_point));
 
         for(int k=0; k<distanceVector.size(); k++){
             if(distanceVector[k] > highestDistance)
@@ -263,21 +325,11 @@ void getObjectsDetails(){
         int blue_avg = blue_sum / cluster_indices[i].indices.size();
         int area_sum = cluster_indices[i].indices.size();
 
+        if(area_sum > max_area)
+            max_area = area_sum;
 
-        getObjectType(height, width, red_avg, green_avg, blue_avg, area_sum);
-        //object_str << "Object " << i << " ";
-        height_str << height << " ";
-        width_str << width << " ";
-        red_str << red_avg << " ";
-        green_str << green_avg << " ";
-        blue_str << blue_avg << " ";
-        area_str << area_sum;
-        std::stringstream output_str;
-        output_str << object_str.str() << height_str.str() << width_str.str() << red_str.str() << green_str.str() << blue_str.str() << area_str.str() << "\n";
-        std::cout << output_str.str() << std::endl;
-
-        output_str.str(""); object_str.str(""); height_str.str(""); width_str.str("");
-        red_str.str(""); green_str.str(""); blue_str.str(""); area_str.str("");
+        Object obj("", "", height, width, red_avg, green_avg, blue_avg, area_sum);
+        objects_in_cloud.push_back(obj);
     }
 }
 
@@ -285,11 +337,18 @@ void getObjectsDetails(){
 void analyze(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr arg_cloud){
     cloud = arg_cloud;
 
+    getObjectsInFile();
+
     setSubSample();
     filterOutliers();
     getTableTop();
     getObjectsOnTable();
     alignPointCloud(cloud); alignPointCloud(cloud_above_plane); alignPointCloud(table_top_cloud);
     getObjectsDetails();
+
+    setObjectType();
+
+    for(int i=0; i<objects_in_cloud.size(); i++)
+        std::cout << objects_in_cloud[i].toString() << std::endl;
 
 }
