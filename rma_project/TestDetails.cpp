@@ -116,11 +116,7 @@ void setObjectType(){
                 objects_in_cloud[i].setType(objects_in_file[j].getType());
                 objects_in_cloud[i].setColor(objects_in_file[j].getColor());
             }
-            std::cout << "distance = " << tmp_distance << std::endl;
-            std::cout << "Type = " << objects_in_file[j].getType() << std::endl;
-            std::cout << "Color = " << objects_in_file[j].getColor() << std::endl;
         }
-        std::cout << "\n" << std::endl;
     }
 }
 
@@ -262,6 +258,7 @@ void getObjectsDetails(){
     float maxY, minY, maxX, minX, maxZ, minZ;
     int height, width;
     pcl::PointXYZRGBA max_x_point; pcl::PointXYZRGBA min_x_point; pcl::PointXYZRGBA max_z_point; pcl::PointXYZRGBA min_z_point;
+    pcl::PointXYZRGBA centroid;
     float highestDistance; float secondHighestDistance;
     std::vector<float> distanceVector;
 
@@ -297,12 +294,17 @@ void getObjectsDetails(){
                 min_z_point = cloud_above_plane->points[cluster_indices[i].indices[j]];
             }
 
-            //Guardados valores dos canais R,G, e B
+           //Guardados valores dos canais R,G, e B
             p = cloud_above_plane->points[cluster_indices[i].indices[j]];
             red_sum += p.r;
             green_sum += p.g;
             blue_sum += p.b;
         }
+        //Calculado centroid do cluster
+        centroid.x = (maxX + minX)/2;
+        centroid.y = (maxY + minY)/2;
+        centroid.z = (maxZ + minZ)/2;
+
         //Calculadas distâncias entre todas as extremidades em X e Z;
         distanceVector.push_back(getEuclideanDistance(max_x_point, min_x_point));
         distanceVector.push_back(getEuclideanDistance(max_x_point, max_z_point));
@@ -329,6 +331,7 @@ void getObjectsDetails(){
             max_area = area_sum;
 
         Object obj("", "", height, width, red_avg, green_avg, blue_avg, area_sum);
+        obj.setCentroid(centroid);
         objects_in_cloud.push_back(obj);
     }
 }

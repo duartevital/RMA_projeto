@@ -3,6 +3,7 @@
 
 CMakeFiles/main.dir/main.cpp.o: ../Game.cpp
 CMakeFiles/main.dir/main.cpp.o: ../Object.cpp
+CMakeFiles/main.dir/main.cpp.o: ../Question.cpp
 CMakeFiles/main.dir/main.cpp.o: ../TestDetails.cpp
 CMakeFiles/main.dir/main.cpp.o: ../main.cpp
 CMakeFiles/main.dir/main.cpp.o: /usr/include/eigen3/Eigen/Cholesky

@@ -71,6 +71,12 @@ string
 -
 sstream
 -
+pcl/io/pcd_io.h
+-
+
+/home/graphics/Desktop/RMA/rma_project/Question.cpp
+vector
+-
 
 /home/graphics/Desktop/RMA/rma_project/TestDetails.cpp
 osgDB/ReadFile
@@ -167,10 +173,12 @@ pcl/segmentation/extract_clusters.h
 /home/graphics/Desktop/RMA/rma_project/main.cpp
 Object.cpp
 /home/graphics/Desktop/RMA/rma_project/Object.cpp
-Game.cpp
-/home/graphics/Desktop/RMA/rma_project/Game.cpp
 TestDetails.cpp
 /home/graphics/Desktop/RMA/rma_project/TestDetails.cpp
+Question.cpp
+/home/graphics/Desktop/RMA/rma_project/Question.cpp
+Game.cpp
+/home/graphics/Desktop/RMA/rma_project/Game.cpp
 
 /usr/include/eigen3/Eigen/Cholesky
 Core

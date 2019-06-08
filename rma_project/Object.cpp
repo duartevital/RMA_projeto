@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <pcl/io/pcd_io.h>
 
 class Object{
 
@@ -13,6 +14,8 @@ public:
     int getGreen(){    return green; }
     int getBlue(){    return blue; }
     int getArea(){    return area; }
+    int getAvgColor();
+    pcl::PointXYZRGBA getCentroid(){    return centroid; }
 
     void setType(std::string type){  this->type=type; }
     void setColor(std::string color){  this->color=color; }
@@ -22,10 +25,12 @@ public:
     void setGreen(int green){ this->green=green; }
     void setBlue(int blue){ this->blue=blue; }
     void setArea(int area){ this->area=area; }
+    void setCentroid(pcl::PointXYZRGBA centroid){   this->centroid=centroid; }
 
     std::string toString();
 
     Object(std::string type, std::string color, int height, int width, int red, int green, int blue, int area);
+    Object();
 
 
 private:
@@ -33,7 +38,10 @@ private:
     int height, width;
     int red, green, blue;
     int area;
+    pcl::PointXYZRGBA centroid;
 };
+
+Object::Object(){   }
 
 Object::Object(std::string type, std::string color, int height, int width, int red, int green, int blue, int area){
     this->type=type; this->color=color; this->height=height; this->width=width;
@@ -44,4 +52,9 @@ std::string Object::toString(){
     std::stringstream s;
     s <<  type << " " << color << " " << height << " " << width << " " << red << " " << green << " " << blue << " " << area;
     return s.str();
+}
+
+int Object::getAvgColor(){
+    int sum = red+green+blue;
+    return sum/3;
 }

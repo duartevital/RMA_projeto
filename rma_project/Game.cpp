@@ -27,8 +27,6 @@
 #include <string>
 #include <stdlib.h>
 
-//std::vector<Object> objects_in_file;
-
 osg::Camera* createHUDCamera( double left, double right, double bottom, double top){
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
     camera->setReferenceFrame( osg::Camera::ABSOLUTE_RF );
@@ -49,21 +47,24 @@ osgText::Text* createText(osg::Vec3 pos, std::string content, float size){
     return text.release();
 }
 
-std::string getRandomQuestion(){
-    std::vector<std::string> question_vec;
+Question getRandomQuestion(){
+    int r1 =6;
+    //int r1 = rand() % 7 + 1;
+    //int r2 = rand() % 2 + 1;
+    int r2 = 1;
 
-    std::string q1 = "Selecciona um objeto à direita/esquerda do objeto pré-seleccionado.";
-    std::string q2 = "Selecciona o objeto mais próximo/afastado do objeto pré-seleccionado.";
-    std::string q3 = "Selecciona o objeto com maior/menor superfície";
-    std::string q4 = "Selecciona o objeto mais alto/baixo";
-    std::string q5 = "Selecciona o objeto mais largo/estreito";
-    std::string q6 = "Seleciona um objeto mais escuro/claro do que o objeto pré-seleccionado";
-    std::string q7 = "Selecciona o objeto do tipo X";
-    question_vec.push_back(q1); question_vec.push_back(q2); question_vec.push_back(q3);
-    question_vec.push_back(q4); question_vec.push_back(q5); question_vec.push_back(q6);
-    question_vec.push_back(q7);
+    Question question(r1, r2);
 
-    int r = rand() % question_vec.size();
-    return question_vec[r];
+    /*if(r1==1 || r1==2 || r1==6){
+        Question question(r1, r2, objects_in_cloud[rand_object]);
+        return question;
+    }else if(r1==3 || r1==4 || r1==5){
+        Question question(r1, r2);
+        return question;
+    }else if(r1==7){
+        Question question(r1, objects_in_cloud[rand_object]);
+        return question;
+    }*/
+    return question;
 }
 

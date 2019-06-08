@@ -1,8 +1,8 @@
 using namespace std;
-
 #include "Object.cpp"
-#include "Game.cpp"
 #include "TestDetails.cpp"
+#include "Question.cpp"
+#include "Game.cpp"
 
 int main(int argsc, char** argsv)
 {
@@ -44,7 +44,7 @@ int main(int argsc, char** argsv)
 
     //Setting HUD text and camera
     osg::ref_ptr<osg::Geode> textGeode = new osg::Geode;
-    osgText::Text* question_txt = createText(osg::Vec3(50.0f, 650.0f, 0.0f), getRandomQuestion(), 20.0f);
+    osgText::Text* question_txt = createText(osg::Vec3(50.0f, 650.0f, 0.0f), getRandomQuestion().getQuestion(), 20.0f);
     textGeode->addDrawable(question_txt);
 
     osg::Camera* hud_camera = createHUDCamera(0, 1024, 0, 768);
