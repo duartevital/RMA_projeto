@@ -180,7 +180,7 @@ int main(int argsc, char** argsv)
 
         if(isMoving){
             lookingForY = findPointsBellow(cloud, ballTransf, kdtree, &bellowpoint, cloud);
-            //Fazer a procura aqui
+            //Fazer a procura aqui e meter resultado numObject
         }
             osg::Vec3 v = ballTransf->getPosition();
             float positionOfSelector = v.z() - lookingForY.y + 0.01;
