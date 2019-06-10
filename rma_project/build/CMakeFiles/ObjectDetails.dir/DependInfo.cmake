@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/graphics/Desktop/RMA/rma_project/ObjectDetails.cpp" "/home/graphics/Desktop/RMA/rma_project/build/CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o"
+  "/mnt/hgfs/RMA/rma_project/ObjectDetails.cpp" "/mnt/hgfs/RMA/rma_project/build/CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -360,7 +360,10 @@ void rotatePointCloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_in,
     Eigen::Affine3f t3 = pcl::getTransformation (0.0, 0.0, 0.0, 0.0, 0.0, -camera_roll);
 
     pcl::transformPointCloud(*cloud_voxelised, *cloud_rotated, t1*t2*t3);
+    
+    /*pcl::PCDWriter writer;
 
+    writer.write<pcl::PointXYZRGBA> ("Out/out_rotated.pcd", *cloud_rotated, false);*/
 
 }
 
@@ -674,6 +677,7 @@ pcl::PointXYZRGBA findPointsBellow(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballP
                       bool *bellowpoint, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_rotated)
 {
     pcl::PointXYZRGBA pointy;
+	pointy.y = 10000;
 
     std::vector<int> search_indexes;
     std::vector<float> search_radiuses;
@@ -701,8 +705,7 @@ pcl::PointXYZRGBA findPointsBellow(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballP
 
     ballPath->push_back(ball_view);
 
-    for(double i =0; i <= 1; i += 0.05){
-        std::cout << "i igual a: " << i << " " << std::endl;
+    for(double i =0; i <= 1; i += 0.02){
 
         //47.
         pcl::PointXYZRGBA ballNeighborPoint;
@@ -710,11 +713,11 @@ pcl::PointXYZRGBA findPointsBellow(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballP
         ballNeighborPoint.x = ball.x;
 
         ballNeighborPoint.y = ball.y + i;
-
+	
         ballNeighborPoint.z = ball.z;
 
         //48.
-        kdtree->radiusSearch (ballNeighborPoint, 0.2, search_indexes, search_radiuses);
+        kdtree->radiusSearch (ballNeighborPoint, 0.03, search_indexes, search_radiuses);
 
         //49.
         if (search_indexes.size() == 0){
@@ -730,8 +733,10 @@ pcl::PointXYZRGBA findPointsBellow(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballP
             break;
         }
     }
+    std::cout << "point found x: " << pointy.x << " " << std::endl;
+    std::cout << "point found y: " << pointy.y << " " << std::endl;
+    std::cout << "point found z: " << pointy.z << " " << std::endl;
     isMoving = false;
-    std::cout << "y igual a: " << pointy.y << " " << std::endl;
     return pointy;
 }
 

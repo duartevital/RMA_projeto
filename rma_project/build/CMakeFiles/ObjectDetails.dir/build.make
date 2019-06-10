@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/graphics/Desktop/RMA/rma_project
+CMAKE_SOURCE_DIR = /mnt/hgfs/RMA/rma_project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/graphics/Desktop/RMA/rma_project/build
+CMAKE_BINARY_DIR = /mnt/hgfs/RMA/rma_project/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/ObjectDetails.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/ObjectDetails.dir/flags.make
 
 CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o: CMakeFiles/ObjectDetails.dir/flags.make
 CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o: ../ObjectDetails.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/hgfs/RMA/rma_project/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o -c /home/graphics/Desktop/RMA/rma_project/ObjectDetails.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o -c /mnt/hgfs/RMA/rma_project/ObjectDetails.cpp
 
 CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/graphics/Desktop/RMA/rma_project/ObjectDetails.cpp > CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /mnt/hgfs/RMA/rma_project/ObjectDetails.cpp > CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.i
 
 CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/graphics/Desktop/RMA/rma_project/ObjectDetails.cpp -o CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /mnt/hgfs/RMA/rma_project/ObjectDetails.cpp -o CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.s
 
 CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o.requires:
 .PHONY : CMakeFiles/ObjectDetails.dir/ObjectDetails.cpp.o.requires
@@ -200,6 +200,6 @@ CMakeFiles/ObjectDetails.dir/clean:
 .PHONY : CMakeFiles/ObjectDetails.dir/clean
 
 CMakeFiles/ObjectDetails.dir/depend:
-	cd /home/graphics/Desktop/RMA/rma_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/graphics/Desktop/RMA/rma_project /home/graphics/Desktop/RMA/rma_project /home/graphics/Desktop/RMA/rma_project/build /home/graphics/Desktop/RMA/rma_project/build /home/graphics/Desktop/RMA/rma_project/build/CMakeFiles/ObjectDetails.dir/DependInfo.cmake --color=$(COLOR)
+	cd /mnt/hgfs/RMA/rma_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/hgfs/RMA/rma_project /mnt/hgfs/RMA/rma_project /mnt/hgfs/RMA/rma_project/build /mnt/hgfs/RMA/rma_project/build /mnt/hgfs/RMA/rma_project/build/CMakeFiles/ObjectDetails.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/ObjectDetails.dir/depend
 

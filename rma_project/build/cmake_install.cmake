@@ -1,4 +1,4 @@
-# Install script for directory: /home/graphics/Desktop/RMA/rma_project
+# Install script for directory: /mnt/hgfs/RMA/rma_project
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,7 +38,7 @@ ELSE(CMAKE_INSTALL_COMPONENT)
   SET(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 ENDIF(CMAKE_INSTALL_COMPONENT)
 
-FILE(WRITE "/home/graphics/Desktop/RMA/rma_project/build/${CMAKE_INSTALL_MANIFEST}" "")
+FILE(WRITE "/mnt/hgfs/RMA/rma_project/build/${CMAKE_INSTALL_MANIFEST}" "")
 FOREACH(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  FILE(APPEND "/home/graphics/Desktop/RMA/rma_project/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
+  FILE(APPEND "/mnt/hgfs/RMA/rma_project/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
 ENDFOREACH(file)

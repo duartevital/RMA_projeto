@@ -121,12 +121,22 @@ void setObjectType(){
     }
 }
 
-//Sub-sample
-void setSubSample(){
-    pcl::VoxelGrid<pcl::PointXYZRGBA> vg;
-    vg.setInputCloud (cloud);
-    vg.setLeafSize (0.01f, 0.01f, 0.01f);
-    vg.filter (*cloud_voxelized);
+void isPointInObject(pcl::PointXYZRGBA p){
+    int indice = -1;
+    float d = 1000;
+    for(int i=0; i<cluster_indices.size(); i++){
+        for(int j=0; j<cluster_indices[i].indices.size(); j++){
+            int x = cloud_above_plane->points[cluster_indices[i].indices[j]].x;
+            int y = cloud_above_plane->points[cluster_indices[i].indices[j]].y;
+            int z = cloud_above_plane->points[cluster_indices[i].indices[j]].z;
+
+            if( getEuclideanDistance(p, cloud_above_plane->points[cluster_indices[i].indices[j]]) < d)
+                d = getEuclideanDistance(p, cloud_above_plane->points[cluster_indices[i].indices[j]]);
+            /*if(p.x == x && p.y == y && p.z == z)
+                std::cout << "YESSSS" << std::endl;*/
+        }
+        std::cout << "cluster " << i << "Distancia entre pontos = " << d << std::endl;
+    }
 }
 
 void filterOutliers(){
@@ -149,16 +159,21 @@ void filterOutliers(){
     pass.setFilterLimits(-1, 1.5);
     pass.filter(*cloud);
 
-    pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
+    /*pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
     tree->setInputCloud(cloud);
     std::vector<pcl::PointIndices> indices;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
-    ec.setClusterTolerance(0.03);
-    ec.setMinClusterSize(1000);
-    ec.setMaxClusterSize(20000);
+    ec.setClusterTolerance(0.02);
+    ec.setMinClusterSize(100);
+    ec.setMaxClusterSize(25000);
     ec.setSearchMethod(tree);
     ec.setInputCloud(cloud);
     ec.extract(indices);
+
+    std::cout << "\n" << "indices size = " << indices.size() << std::endl;
+    for(int i=0; i<<indices.size(); i++){
+        std::cout << "cluster " << i << " =  " << indices[i].indices.size() << std::endl;
+    }
 
     int max_size = 0;
     for(int i=0; i<indices.size(); i++){
@@ -173,7 +188,7 @@ void filterOutliers(){
             max_size = tmp_cloud->size();
             cloud = tmp_cloud;
         }
-    }
+    }*/
 
     //Remoção de outliers
     pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
@@ -182,6 +197,14 @@ void filterOutliers(){
     sor.setMinNeighborsInRadius(50);
     sor.filter(*cloud);
 
+}
+
+//Sub-sample
+void setSubSample(){
+    pcl::VoxelGrid<pcl::PointXYZRGBA> vg;
+    vg.setInputCloud (cloud);
+    vg.setLeafSize (0.01f, 0.01f, 0.01f);
+    vg.filter (*cloud_voxelized);
 }
 
 //Identificação do plano da mesa
@@ -333,6 +356,7 @@ void getObjectsDetails(){
 
         Object obj("", "", height, width, red_avg, green_avg, blue_avg, area_sum);
         obj.setCentroid(centroid);
+        obj.setClusterIndice(i);
         objects_in_cloud.push_back(obj);
     }
 }
@@ -345,7 +369,6 @@ void analyze(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr arg_cloud){
 
     filterOutliers();
     setSubSample();
-    filterOutliers();
     getTableTop();
     getObjectsOnTable();
     alignPointCloud(cloud); alignPointCloud(cloud_above_plane); alignPointCloud(table_top_cloud);

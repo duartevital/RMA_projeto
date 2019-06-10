@@ -16,6 +16,7 @@ public:
     int getArea(){    return area; }
     int getAvgColor();
     pcl::PointXYZRGBA getCentroid(){    return centroid; }
+    int getClusterIndice(){   return cluster_indice; }
 
     void setType(std::string type){  this->type=type; }
     void setColor(std::string color){  this->color=color; }
@@ -26,6 +27,7 @@ public:
     void setBlue(int blue){ this->blue=blue; }
     void setArea(int area){ this->area=area; }
     void setCentroid(pcl::PointXYZRGBA centroid){   this->centroid=centroid; }
+    void setClusterIndice(int cluster_indice){  this->cluster_indice=cluster_indice; }
 
     std::string toString();
 
@@ -37,7 +39,7 @@ private:
     std::string type, color;
     int height, width;
     int red, green, blue;
-    int area;
+    int area, cluster_indice;
     pcl::PointXYZRGBA centroid;
 };
 

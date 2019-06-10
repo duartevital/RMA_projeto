@@ -7,7 +7,11 @@ using namespace std;
 
 int main(int argsc, char** argsv)
 {
+	// create a point cloud to keep track of the ball's path
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballPath (new pcl::PointCloud<pcl::PointXYZRGBA>);
+    ballPath->height = 1;
 
+		
     //! MIGUEL STUFF
     // ball dynamics state variables
     bool collidedLeft = false, collidedRight = false, collidedFront = false, collidedBack = false, collidedBelow = false, bellowpoint = false;
@@ -29,7 +33,7 @@ int main(int argsc, char** argsv)
     estimateCameraPose(cloud, &camera_pitch, &camera_roll, &camera_height);
     //! MIGUEL STUFF
 
-    //analyze(cloud);
+
 
     //! MIGUEL STUFF
     // go through the point cloud and generate a RGB image and a range image
@@ -41,14 +45,17 @@ int main(int argsc, char** argsv)
     osg::ref_ptr<osg::Geode> orthoTextureGeode = new osg::Geode;
     createOrthoTexture(orthoTextureGeode, data, dataDepth, cloud->width, cloud->height);
     //! MIGUEL STUFF
+
+
     analyze(cloud);
+
 
     //Setting clouds
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_red (new pcl::PointCloud<pcl::PointXYZRGBA>);
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_blue (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
-    cloud_red = table_top_cloud;
-    cloud_blue = cloud_above_plane;
+    cloud_red = cloud_above_plane;
+    cloud_blue = cloud;
 
     //Setting PCL Visualizer
     pcl::visualization::PCLVisualizer *viewerPCL = new pcl::visualization::PCLVisualizer("3D Viewer");
@@ -90,7 +97,10 @@ int main(int argsc, char** argsv)
 
 
     //! MIGUEL STUFF
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_rotated (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
+	rotatePointCloud(cloud, cloud_rotated, camera_pitch, camera_roll, camera_height);
+	
     // create a dynamic ball node alongside its shadow
     osg::ref_ptr<osg::PositionAttitudeTransform> ballTransf = new osg::PositionAttitudeTransform;
     osg::ref_ptr<osg::PositionAttitudeTransform> shadowTransf = new osg::PositionAttitudeTransform;
@@ -152,7 +162,7 @@ int main(int argsc, char** argsv)
 
     // force the perspective camera look at the ball and the shadow
     camera2->addChild( ballTransf );
-    camera2->addChild( shadowTransf );
+    //camera2->addChild( shadowTransf );
     camera2->addChild( selectTransform );
     camera2->addChild( SelectPoint );
 
@@ -179,21 +189,47 @@ int main(int argsc, char** argsv)
         //! MIGUEL STUFF
 
         if(isMoving){
-            lookingForY = findPointsBellow(cloud, ballTransf, kdtree, &bellowpoint, cloud);
+            lookingForY = findPointsBellow(ballPath, ballTransf, kdtree, &bellowpoint, cloud);
             //Fazer a procura aqui
+            //if(lookingForY.y < 0)
+                isPointInObject(lookingForY);
         }
-            osg::Vec3 v = ballTransf->getPosition();
-            float positionOfSelector = v.z() - lookingForY.y + 0.01;
-            std::cout << "y igual a: " << positionOfSelector << " " << std::endl;
-            selectTransform->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,-30));
-            SelectPoint->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,-positionOfSelector));
+            osg::Vec3 planePos = ballTransf->getPosition();
+            //float positionOfSelector = planePos.z() - lookingForY.y - 0.04;
 
+            selectTransform->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,-30));
+            
+            osg::Vec3d point(planePos.x(), planePos.y(),-lookingForY.y *100 + 2);
+            SelectPoint->setPosition(point);
+            /*SelectPoint->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,lookingForY.x * 100));
+            osg::Vec3 sphereselectorPos = SelectPoint->getPosition();*/
+			//SelectPoint->setPosition(osg::Vec3(0,0,lookingForY.y));
+			
+			
             //! MIGUEL STUFF
 
-            viewerPCL->spinOnce (100);
+
+			pcl::ModelCoefficients cube_coeff;
+			cube_coeff.values.resize (10);
+            cube_coeff.values[0] = -SelectPoint->getPosition().x()/100.f;;
+            cube_coeff.values[1] = -SelectPoint->getPosition().z()/100.f;;
+            cube_coeff.values[2] = -SelectPoint->getPosition().y()/100.f;;
+			cube_coeff.values[3] = cube_coeff.values[4] = cube_coeff.values[5] = cube_coeff.values[6] = 0;
+            cube_coeff.values[7] = cube_coeff.values[8] = cube_coeff.values[9] = 0.03;
+			viewerPCL->removeShape("cube");
+			viewerPCL->addCube(cube_coeff, "cube");
+		
+		    viewerPCL->spinOnce (100);
             viewerOSG.frame();
             boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
+
     }
+    
+    /*if (ballPath->size() > 0)
+    {
+        pcl::PCDWriter writer;
+        writer.write<pcl::PointXYZRGBA> ("Out/ball_path.pcd", *ballPath, false);
+    }*/
 }
 

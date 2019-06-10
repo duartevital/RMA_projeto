@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/graphics/Desktop/RMA/rma_project/ObjectDetails.cpp
+/mnt/hgfs/RMA/rma_project/ObjectDetails.cpp
 iostream
 -
 fstream

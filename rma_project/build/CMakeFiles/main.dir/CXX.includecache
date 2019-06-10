@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/graphics/Desktop/RMA/rma_project/Controller.cpp
+/mnt/hgfs/RMA/rma_project/Controller.cpp
 osg/Camera
 -
 osgDB/ReadFile
@@ -72,7 +72,7 @@ algorithm
 sstream
 -
 
-/home/graphics/Desktop/RMA/rma_project/Game.cpp
+/mnt/hgfs/RMA/rma_project/Game.cpp
 osgDB/ReadFile
 -
 osgViewer/Viewer
@@ -130,7 +130,7 @@ string
 stdlib.h
 -
 
-/home/graphics/Desktop/RMA/rma_project/Object.cpp
+/mnt/hgfs/RMA/rma_project/Object.cpp
 iostream
 -
 string
@@ -140,11 +140,11 @@ sstream
 pcl/io/pcd_io.h
 -
 
-/home/graphics/Desktop/RMA/rma_project/Question.cpp
+/mnt/hgfs/RMA/rma_project/Question.cpp
 vector
 -
 
-/home/graphics/Desktop/RMA/rma_project/TestDetails.cpp
+/mnt/hgfs/RMA/rma_project/TestDetails.cpp
 osgDB/ReadFile
 -
 osgViewer/Viewer
@@ -236,17 +236,17 @@ pcl/filters/extract_indices.h
 pcl/segmentation/extract_clusters.h
 -
 
-/home/graphics/Desktop/RMA/rma_project/main.cpp
+/mnt/hgfs/RMA/rma_project/main.cpp
 Object.cpp
-/home/graphics/Desktop/RMA/rma_project/Object.cpp
+/mnt/hgfs/RMA/rma_project/Object.cpp
 TestDetails.cpp
-/home/graphics/Desktop/RMA/rma_project/TestDetails.cpp
+/mnt/hgfs/RMA/rma_project/TestDetails.cpp
 Question.cpp
-/home/graphics/Desktop/RMA/rma_project/Question.cpp
+/mnt/hgfs/RMA/rma_project/Question.cpp
 Game.cpp
-/home/graphics/Desktop/RMA/rma_project/Game.cpp
+/mnt/hgfs/RMA/rma_project/Game.cpp
 Controller.cpp
-/home/graphics/Desktop/RMA/rma_project/Controller.cpp
+/mnt/hgfs/RMA/rma_project/Controller.cpp
 
 /usr/include/eigen3/Eigen/Cholesky
 Core

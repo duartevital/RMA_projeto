@@ -5,21 +5,21 @@
       <Option title="rma_project" />
       <Option makefile_is_custom="1" />
       <Option compiler="gcc" />
-      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\share\;CMake Files\..\..\..\..\..\usr\share\pcl-1.7\;CMake Files\..\..\..\..\..\usr\lib\;CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\;CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\CMake\;" />
+      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\share\;CMake Files\..\..\..\..\usr\share\pcl-1.7\;CMake Files\..\..\..\..\usr\lib\;CMake Files\..\..\..\..\usr\lib\vtk-5.8\;CMake Files\..\..\..\..\usr\lib\vtk-5.8\CMake\;" />
       <Build>
       <Target title="all">
-         <Option working_dir="/home/graphics/Desktop/RMA/rma_project/build" />
+         <Option working_dir="/mnt/hgfs/RMA/rma_project/build" />
          <Option type="4" />
          <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 all" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <Build command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
       <Target title="ObjectDetails">
-         <Option output="/home/graphics/Desktop/RMA/rma_project/build/ObjectDetails" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/graphics/Desktop/RMA/rma_project/build" />
+         <Option output="/mnt/hgfs/RMA/rma_project/build/ObjectDetails" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/mnt/hgfs/RMA/rma_project/build" />
          <Option object_output="./" />
          <Option type="1" />
          <Option compiler="gcc" />
@@ -41,15 +41,15 @@
             <Add directory="/usr/local/include" />
          </Compiler>
          <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 ObjectDetails" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <Build command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 ObjectDetails" />
+            <CompileFile command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
       <Target title="ObjectDetails/fast">
-         <Option output="/home/graphics/Desktop/RMA/rma_project/build/ObjectDetails" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/graphics/Desktop/RMA/rma_project/build" />
+         <Option output="/mnt/hgfs/RMA/rma_project/build/ObjectDetails" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/mnt/hgfs/RMA/rma_project/build" />
          <Option object_output="./" />
          <Option type="1" />
          <Option compiler="gcc" />
@@ -71,15 +71,15 @@
             <Add directory="/usr/local/include" />
          </Compiler>
          <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 ObjectDetails/fast" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <Build command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 ObjectDetails/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
       <Target title="main">
-         <Option output="/home/graphics/Desktop/RMA/rma_project/build/main" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/graphics/Desktop/RMA/rma_project/build" />
+         <Option output="/mnt/hgfs/RMA/rma_project/build/main" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/mnt/hgfs/RMA/rma_project/build" />
          <Option object_output="./" />
          <Option type="1" />
          <Option compiler="gcc" />
@@ -101,15 +101,15 @@
             <Add directory="/usr/local/include" />
          </Compiler>
          <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 main" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <Build command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 main" />
+            <CompileFile command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
       <Target title="main/fast">
-         <Option output="/home/graphics/Desktop/RMA/rma_project/build/main" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/graphics/Desktop/RMA/rma_project/build" />
+         <Option output="/mnt/hgfs/RMA/rma_project/build/main" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/mnt/hgfs/RMA/rma_project/build" />
          <Option object_output="./" />
          <Option type="1" />
          <Option compiler="gcc" />
@@ -131,80 +131,80 @@
             <Add directory="/usr/local/include" />
          </Compiler>
          <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 main/fast" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <Build command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 main/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
       <Target title="rebuild_cache">
-         <Option working_dir="/home/graphics/Desktop/RMA/rma_project/build" />
+         <Option working_dir="/mnt/hgfs/RMA/rma_project/build" />
          <Option type="4" />
          <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 rebuild_cache" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/graphics/Desktop/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <Build command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/mnt/hgfs/RMA/rma_project/build/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
       </Build>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/ObjectDetails.cpp">
+      <Unit filename="/mnt/hgfs/RMA/rma_project/ObjectDetails.cpp">
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/main.cpp">
+      <Unit filename="/mnt/hgfs/RMA/rma_project/main.cpp">
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/CMakeLists.txt">
+      <Unit filename="/mnt/hgfs/RMA/rma_project/CMakeLists.txt">
           <Option virtualFolder="CMake Files\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/share/pcl-1.7/PCLConfigVersion.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\share\pcl-1.7\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/share/pcl-1.7/PCLConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\share\pcl-1.7\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/share/pcl-1.7/PCLConfig.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\share\pcl-1.7\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/share/pcl-1.7/PCLConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\share\pcl-1.7\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfigVersion.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfig.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfigQt.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfigQt.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKTargets.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKTargets.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKTargets-release.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKTargets-release.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/UseVTK.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/UseVTK.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfigVersion.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfig.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfigQt.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfigQt.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/UseVTK.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/UseVTK.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfigVersion.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfigVersion.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfig.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/VTKConfigQt.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/VTKConfigQt.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/UseVTK.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/UseVTK.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\" />
       </Unit>
-      <Unit filename="/home/graphics/Desktop/RMA/rma_project/../../../../../usr/lib/vtk-5.8/CMake/vtkMakeInstantiator.cmake">
-          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\vtk-5.8\CMake\" />
+      <Unit filename="/mnt/hgfs/RMA/rma_project/../../../../usr/lib/vtk-5.8/CMake/vtkMakeInstantiator.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\usr\lib\vtk-5.8\CMake\" />
       </Unit>
    </Project>
 </CodeBlocks_project_file>
