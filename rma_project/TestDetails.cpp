@@ -46,6 +46,7 @@
 #include <pcl/segmentation/extract_clusters.h>
 
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
+pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_voxelized (new pcl::PointCloud<pcl::PointXYZRGBA>);
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr table_top_cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_above_plane (new pcl::PointCloud<pcl::PointXYZRGBA>);
 pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
@@ -125,7 +126,7 @@ void setSubSample(){
     pcl::VoxelGrid<pcl::PointXYZRGBA> vg;
     vg.setInputCloud (cloud);
     vg.setLeafSize (0.01f, 0.01f, 0.01f);
-    vg.filter (*cloud);
+    vg.filter (*cloud_voxelized);
 }
 
 void filterOutliers(){
@@ -177,8 +178,8 @@ void filterOutliers(){
     //Remoção de outliers
     pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
     sor.setInputCloud(cloud);
-    sor.setRadiusSearch(0.04);
-    sor.setMinNeighborsInRadius(60);
+    sor.setRadiusSearch(0.05);
+    sor.setMinNeighborsInRadius(50);
     sor.filter(*cloud);
 
 }
@@ -191,10 +192,10 @@ void getTableTop(){
     seg.setOptimizeCoefficients (true);
     seg.setModelType (pcl::SACMODEL_PLANE);
     seg.setMethodType (pcl::SAC_RANSAC);
-    seg.setDistanceThreshold (0.001);
-    seg.setInputCloud (cloud);
+    seg.setDistanceThreshold (0.01);
+    seg.setInputCloud (cloud_voxelized);
     seg.segment (*inliers, *coefficients);
-    extract.setInputCloud(cloud);
+    extract.setInputCloud(cloud_voxelized);
     extract.setIndices (inliers);
     extract.setNegative (false);
     extract.filter (*table_top_cloud);
@@ -228,8 +229,8 @@ void alignPointCloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ex_cloud){
 void getObjectsOnTable(){
     c_a = coefficients->values[0]; c_b = coefficients->values[1];
     c_c = coefficients->values[2]; c_d = coefficients->values[3];
-    for(int i = 0; i<cloud->size(); i++){
-        pcl::PointXYZRGBA p = cloud->points[i];
+    for(int i = 0; i<cloud_voxelized->size(); i++){
+        pcl::PointXYZRGBA p = cloud_voxelized->points[i];
         if(c_a*p.x+c_b*p.y+c_c*p.z+c_d > 0.01){
             cloud_above_plane->push_back(p);
         }
@@ -238,7 +239,7 @@ void getObjectsOnTable(){
     //Remoção de outliers
     pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
     sor.setInputCloud(cloud_above_plane);
-    sor.setRadiusSearch(0.04);
+    sor.setRadiusSearch(0.03);
     sor.setMinNeighborsInRadius(18);
     sor.filter(*cloud_above_plane);
 
@@ -320,7 +321,7 @@ void getObjectsDetails(){
                 secondHighestDistance = distanceVector[k];
         }
         height = sqrt(pow(maxY-minY, 2)) * 100;
-        width = highestDistance;
+        width = secondHighestDistance;
 
         int red_avg = red_sum / cluster_indices[i].indices.size();
         int green_avg = green_sum / cluster_indices[i].indices.size();
@@ -342,6 +343,7 @@ void analyze(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr arg_cloud){
 
     getObjectsInFile();
 
+    filterOutliers();
     setSubSample();
     filterOutliers();
     getTableTop();
