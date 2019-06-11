@@ -72,15 +72,26 @@ int main(int argsc, char** argsv)
 
 
     //Setting HUD text and camera
-    Question question = getRandomQuestion();;
-    osg::ref_ptr<osg::Geode> textGeode = new osg::Geode;
+    Question question = getRandomQuestion();
 
+    //Text da pergunta
+    osg::ref_ptr<osg::Geode> textGeode = new osg::Geode;
     osgText::Text* question_txt = createText(osg::Vec3(50.0f, 650.0f, 0.0f), question.getQuestion(), 20.0f);
     question_txt->setDataVariance(osg::Object::DYNAMIC);
     textGeode->addDrawable(question_txt);
+    //Text da Pontuação
+    osg::ref_ptr<osg::Geode> scoreGeode = new osg::Geode;
+    int score = 0;
+    std::string score_str("Score: ");
+    std::stringstream score_stream;
+    score_stream << score_str << score;
+    osgText::Text* score_txt = createText(osg::Vec3(50.0f, 50.0f, 0.0f), score_stream.str(), 30.0f);
+    score_txt->setDataVariance(osg::Object::DYNAMIC);
+    scoreGeode->addDrawable(score_txt);
 
     osg::Camera* hud_camera = createHUDCamera(0, 1024, 0, 768);
     hud_camera->addChild(textGeode.get());
+    hud_camera->addChild(scoreGeode.get());
     hud_camera->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
     //! MIGUEL STUFF
@@ -207,6 +218,10 @@ int main(int argsc, char** argsv)
                 Selectionaire ->setScale(osg::Vec3(0,0,0));
                 question = getRandomQuestion();
                 question_txt->setText(question.getQuestion());
+                score++;
+                std::stringstream new_score_stream;
+                new_score_stream << score_str << score;
+                score_txt->setText(new_score_stream.str());
                 std::cout << "FOUND CORRECT OBJECT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
             }
             pressed_J = false;
