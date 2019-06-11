@@ -17,6 +17,8 @@ public:
     int getAvgColor();
     pcl::PointXYZRGBA getCentroid(){    return centroid; }
     int getClusterIndice(){   return cluster_indice; }
+    bool isInitialized(){   return initialized; }
+
 
     void setType(std::string type){  this->type=type; }
     void setColor(std::string color){  this->color=color; }
@@ -41,14 +43,18 @@ private:
     int red, green, blue;
     int area, cluster_indice;
     pcl::PointXYZRGBA centroid;
+    bool initialized;
 };
 
-Object::Object(){   }
+Object::Object(){
+    initialized = false;
+}
 
 Object::Object(std::string type, std::string color, int height, int width, int red, int green, int blue, int area){
     this->type=type; this->color=color; this->height=height; this->width=width;
     this->red=red; this->green=green; this->blue=blue;
     this->area=area;
+    initialized = true;
 }
 std::string Object::toString(){
     std::stringstream s;

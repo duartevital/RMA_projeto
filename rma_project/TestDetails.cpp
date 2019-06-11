@@ -55,7 +55,7 @@ std::vector<pcl::PointIndices> cluster_indices;
 ofstream output_file;
 std::vector<Object> objects_in_file;
 std::vector<Object> objects_in_cloud;
-int max_area = 0;
+int max_area = 0, max_height = 0, max_width = 0;
 
 //Guardar em objects_on_file os objectos no txt
 void getObjectsInFile(){
@@ -106,7 +106,7 @@ void setObjectType(){
             red2 = objects_in_file[j].getRed(); green2 = objects_in_file[j].getGreen(); blue2 = objects_in_file[j].getBlue();
             area2 = objects_in_file[j].getArea();
 
-            int height_count = pow(height1-height2, 2), width_count = pow(width1-width2, 2);
+            int height_count = pow(height1-height2, 2)/max_height, width_count = pow(width1-width2, 2)/max_width;
             float red_count = pow(red1-red2, 2)/255, green_count = pow(green1-green2, 2)/255, blue_count = pow(blue1-blue2, 2)/255;
             int area_count = pow(area1-area2, 2)/max_area;
             float count_sum = height_count + width_count + red_count + green_count + blue_count + area_count;
@@ -121,22 +121,54 @@ void setObjectType(){
     }
 }
 
-void isPointInObject(pcl::PointXYZRGBA p){
+Object isPointInObject(pcl::PointXYZRGBA p){
+    Object obj;
     int indice = -1;
-    float d = 1000;
     for(int i=0; i<cluster_indices.size(); i++){
+        float d = 1000;
         for(int j=0; j<cluster_indices[i].indices.size(); j++){
             int x = cloud_above_plane->points[cluster_indices[i].indices[j]].x;
             int y = cloud_above_plane->points[cluster_indices[i].indices[j]].y;
             int z = cloud_above_plane->points[cluster_indices[i].indices[j]].z;
 
-            if( getEuclideanDistance(p, cloud_above_plane->points[cluster_indices[i].indices[j]]) < d)
-                d = getEuclideanDistance(p, cloud_above_plane->points[cluster_indices[i].indices[j]]);
-            /*if(p.x == x && p.y == y && p.z == z)
-                std::cout << "YESSSS" << std::endl;*/
+            if( getEuclideanDistance(p, cloud_above_plane->points[cluster_indices[i].indices[j]]) < 1){
+                for(int k = 0; k < objects_in_cloud.size(); k++){
+                    if(i == objects_in_cloud[k].getClusterIndice())
+                        obj = objects_in_cloud[k];
+                }
+            }
         }
-        std::cout << "cluster " << i << "Distancia entre pontos = " << d << std::endl;
     }
+    if(!obj.isInitialized())
+        std::cout << "Object NOT found..." << std::endl;
+    else
+        std::cout << "FOUND object: " << obj.toString() << std::endl;
+
+    return obj;
+}
+
+void alignPointCloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ex_cloud){
+    double pitch, roll, height;
+    double norm = sqrt(c_a*c_a+c_b*c_b+c_c*c_c);
+    c_a = c_a/norm;
+    c_b = c_b/norm;
+    c_c = c_c/norm;
+
+    if (c_c<0){
+        c_a*=-1; c_b*=-1; c_c*=-1;
+    }
+
+    pitch = asin(c_c);
+    roll = -acos(c_b/cos(pitch));
+    height = fabs(c_d);
+
+    if (c_a<0)
+        (roll) *= -1;
+
+    Eigen::Affine3f t1 = pcl::getTransformation (0.0, -height, 0.0, 0.0, 0.0, 0);
+    Eigen::Affine3f t2 = pcl::getTransformation (0.0, 0.0, 0.0, -pitch, 0.0, 0.0);
+    Eigen::Affine3f t3 = pcl::getTransformation (0.0, 0.0, 0.0, 0.0, 0.0, -roll);
+    pcl::transformPointCloud(*ex_cloud, *ex_cloud, t1*t2*t3);
 }
 
 void filterOutliers(){
@@ -151,29 +183,25 @@ void filterOutliers(){
     //Eixo Y
     pass.setFilterFieldName("y");
     pass.setFilterLimitsNegative(false);
-    pass.setFilterLimits(-1, 0.5);
-    //pass.filter(*cloud);
+    pass.setFilterLimits(-1, 0.2);
+    pass.filter(*cloud);
     //Eixo Z
     pass.setFilterFieldName("z");
     pass.setFilterLimitsNegative(false);
     pass.setFilterLimits(-1, 1.5);
     pass.filter(*cloud);
 
-    /*pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
+    pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
     tree->setInputCloud(cloud);
     std::vector<pcl::PointIndices> indices;
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
-    ec.setClusterTolerance(0.02);
-    ec.setMinClusterSize(100);
-    ec.setMaxClusterSize(25000);
+    ec.setClusterTolerance(0.01);
+    ec.setMinClusterSize(10);
+    ec.setMaxClusterSize(100000000);
     ec.setSearchMethod(tree);
     ec.setInputCloud(cloud);
     ec.extract(indices);
 
-    std::cout << "\n" << "indices size = " << indices.size() << std::endl;
-    for(int i=0; i<<indices.size(); i++){
-        std::cout << "cluster " << i << " =  " << indices[i].indices.size() << std::endl;
-    }
 
     int max_size = 0;
     for(int i=0; i<indices.size(); i++){
@@ -188,7 +216,7 @@ void filterOutliers(){
             max_size = tmp_cloud->size();
             cloud = tmp_cloud;
         }
-    }*/
+    }
 
     //Remoção de outliers
     pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
@@ -196,7 +224,6 @@ void filterOutliers(){
     sor.setRadiusSearch(0.05);
     sor.setMinNeighborsInRadius(50);
     sor.filter(*cloud);
-
 }
 
 //Sub-sample
@@ -222,30 +249,6 @@ void getTableTop(){
     extract.setIndices (inliers);
     extract.setNegative (false);
     extract.filter (*table_top_cloud);
-}
-
-void alignPointCloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ex_cloud){
-    double pitch, roll, height;
-    double norm = sqrt(c_a*c_a+c_b*c_b+c_c*c_c);
-    c_a = c_a/norm;
-    c_b = c_b/norm;
-    c_c = c_c/norm;
-
-    if (c_c<0){
-        c_a*=-1; c_b*=-1; c_c*=-1;
-    }
-
-    pitch = asin(c_c);
-    roll = -acos(c_b/cos(pitch));
-    height = fabs(c_d);
-
-    if (c_a<0)
-        (roll) *= -1;
-
-    Eigen::Affine3f t1 = pcl::getTransformation (0.0, -height, 0.0, 0.0, 0.0, 0);
-    Eigen::Affine3f t2 = pcl::getTransformation (0.0, 0.0, 0.0, -pitch, 0.0, 0.0);
-    Eigen::Affine3f t3 = pcl::getTransformation (0.0, 0.0, 0.0, 0.0, 0.0, -roll);
-    pcl::transformPointCloud(*ex_cloud, *ex_cloud, t1*t2*t3);
 }
 
 //Identificação dos pontos acima do plano da mesa e isolar objetos
@@ -353,6 +356,10 @@ void getObjectsDetails(){
 
         if(area_sum > max_area)
             max_area = area_sum;
+        if(height > max_height)
+            max_height = height;
+        if(width > max_width)
+            max_width = width;
 
         Object obj("", "", height, width, red_avg, green_avg, blue_avg, area_sum);
         obj.setCentroid(centroid);
@@ -371,7 +378,7 @@ void analyze(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr arg_cloud){
     setSubSample();
     getTableTop();
     getObjectsOnTable();
-    alignPointCloud(cloud); alignPointCloud(cloud_above_plane); alignPointCloud(table_top_cloud);
+    alignPointCloud(arg_cloud); alignPointCloud(cloud); alignPointCloud(cloud_voxelized); alignPointCloud(cloud_above_plane); alignPointCloud(table_top_cloud);
     getObjectsDetails();
 
     setObjectType();

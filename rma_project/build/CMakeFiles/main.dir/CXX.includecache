@@ -241,12 +241,12 @@ Object.cpp
 /mnt/hgfs/RMA/rma_project/Object.cpp
 TestDetails.cpp
 /mnt/hgfs/RMA/rma_project/TestDetails.cpp
+Controller.cpp
+/mnt/hgfs/RMA/rma_project/Controller.cpp
 Question.cpp
 /mnt/hgfs/RMA/rma_project/Question.cpp
 Game.cpp
 /mnt/hgfs/RMA/rma_project/Game.cpp
-Controller.cpp
-/mnt/hgfs/RMA/rma_project/Controller.cpp
 
 /usr/include/eigen3/Eigen/Cholesky
 Core

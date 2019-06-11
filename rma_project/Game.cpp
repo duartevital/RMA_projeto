@@ -27,6 +27,7 @@
 #include <string>
 #include <stdlib.h>
 
+
 osg::Camera* createHUDCamera( double left, double right, double bottom, double top){
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
     camera->setReferenceFrame( osg::Camera::ABSOLUTE_RF );
@@ -47,24 +48,13 @@ osgText::Text* createText(osg::Vec3 pos, std::string content, float size){
     return text.release();
 }
 
+
 Question getRandomQuestion(){
-    int r1 =6;
-    //int r1 = rand() % 7 + 1;
-    //int r2 = rand() % 2 + 1;
-    int r2 = 1;
+    int r1 = rand() % 7 + 1;
+    int r2 = rand() % 2 + 1;
 
     Question question(r1, r2);
 
-    /*if(r1==1 || r1==2 || r1==6){
-        Question question(r1, r2, objects_in_cloud[rand_object]);
-        return question;
-    }else if(r1==3 || r1==4 || r1==5){
-        Question question(r1, r2);
-        return question;
-    }else if(r1==7){
-        Question question(r1, objects_in_cloud[rand_object]);
-        return question;
-    }*/
     return question;
 }
 

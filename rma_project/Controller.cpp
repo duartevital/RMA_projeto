@@ -29,12 +29,17 @@
 #include <pcl/search/kdtree.h>
 #include <pcl/filters/passthrough.h>
 #include <pcl/common/transforms.h>
-
 #include <string>
 #include <algorithm>
 #include <sstream>
 
+pcl::PointXYZRGBA lookingForY;
 bool isMoving = false;
+osg::ref_ptr<osg::PositionAttitudeTransform> Selectionaire = new osg::PositionAttitudeTransform;
+osg::ref_ptr<osg::PositionAttitudeTransform> QuestSelect = new osg::PositionAttitudeTransform;
+Object selectedOBJ; Object questOBJ;
+Object found; bool initializedQuest = false;
+bool pressed_J = false;
 
 static const char* textureVertexSource = {
     "varying vec3 normal;\n"
@@ -71,6 +76,82 @@ static const char* ballFragmentSource = {
     "    gl_FragDepth = (1.0/gl_FragCoord.w)/1000.0;\n"
     "}\n"
 };
+
+void newSelect(Object obj){
+    Selectionaire ->setScale(osg::Vec3((obj.getWidth() + 1)/2,(obj.getWidth() + 1)/2, 1 ));
+    Selectionaire ->setPosition(osg::Vec3(-obj.getCentroid().x*100,-obj.getCentroid().z*100,-obj.getCentroid().y*100));
+
+}
+
+pcl::PointXYZRGBA findPointsBellow(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballPath, osg::ref_ptr<osg::PositionAttitudeTransform> ballTransf,
+                      pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr kdtree,
+                      bool *bellowpoint, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_rotated)
+{
+    pcl::PointXYZRGBA pointy;
+    pointy.y = 10000;
+
+    std::vector<int> search_indexes;
+    std::vector<float> search_radiuses;
+
+    std::cout << "Started new cycle" << std::endl;
+    //45.
+    pcl::PointXYZRGBA ball;
+
+    ball.x = -ballTransf->getPosition().x()/100.f;
+
+    ball.y = -ballTransf->getPosition().z()/100.f;
+
+    ball.z = -ballTransf->getPosition().y()/100.f;
+
+    //46.
+    pcl::PointXYZRGBA ball_view;
+
+    ball_view.x = -ballTransf->getPosition().x()/100.f;
+
+    ball_view.y = ballTransf->getPosition().z()/100.f;
+
+    ball_view.z = ballTransf->getPosition().y()/100.f;
+
+    ballPath->width++;
+
+    ballPath->push_back(ball_view);
+
+    for(double i =0; i <= 1; i += 0.02){
+
+        //47.
+        pcl::PointXYZRGBA ballNeighborPoint;
+
+        ballNeighborPoint.x = ball.x;
+
+        ballNeighborPoint.y = ball.y + i;
+
+        ballNeighborPoint.z = ball.z;
+
+        //48.
+        kdtree->radiusSearch (ballNeighborPoint, 0.03, search_indexes, search_radiuses);
+
+        //49.
+        if (search_indexes.size() == 0){
+            *bellowpoint = false;
+        }
+        else{
+            for(int j= 0; j < search_indexes.size(); ++j) {
+                if(cloud_rotated->points[ search_indexes[j] ].y < pointy.y){
+                    pointy = cloud_rotated->points [search_indexes[j] ];
+                }
+            }
+            *bellowpoint = true;
+            break;
+        }
+    }
+    std::cout << "point found x: " << pointy.x << " " << std::endl;
+    std::cout << "point found y: " << pointy.y << " " << std::endl;
+    std::cout << "point found z: " << pointy.z << " " << std::endl;
+    isMoving = false;
+    return pointy;
+}
+
+
 
 class BallCallback : public osg::NodeCallback
 {
@@ -183,6 +264,12 @@ bool BallController::handle( const osgGA::GUIEventAdapter& ea,
         case osgGA::GUIEventAdapter::KEYDOWN:
             switch ( ea.getKey() )
         {
+            case 'j': case 'J':
+                    found = isPointInObject(lookingForY);
+                    if(found.isInitialized())
+                        newSelect(found);
+                    pressed_J = true;
+                break;
             case 'q': case 'Q':
                     v.z() += 1.0;
                 break;
@@ -360,7 +447,7 @@ void rotatePointCloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_in,
     Eigen::Affine3f t3 = pcl::getTransformation (0.0, 0.0, 0.0, 0.0, 0.0, -camera_roll);
 
     pcl::transformPointCloud(*cloud_voxelised, *cloud_rotated, t1*t2*t3);
-    
+
     /*pcl::PCDWriter writer;
 
     writer.write<pcl::PointXYZRGBA> ("Out/out_rotated.pcd", *cloud_rotated, false);*/
@@ -672,73 +759,65 @@ void detectCollisions(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballPath, osg::ref
 */
 
 
-pcl::PointXYZRGBA findPointsBellow(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballPath, osg::ref_ptr<osg::PositionAttitudeTransform> ballTransf,
-                      pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr kdtree,
-                      bool *bellowpoint, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_rotated)
-{
-    pcl::PointXYZRGBA pointy;
-	pointy.y = 10000;
+void createGeneralSelectionCircle(osg::ref_ptr<osg::PositionAttitudeTransform> plane_transf){
+    //Selection Sphere
 
-    std::vector<int> search_indexes;
-    std::vector<float> search_radiuses;
+    osg::ref_ptr<osg::Geode> pointer = new osg::Geode;
 
-    std::cout << "Started new cycle" << std::endl;
-    //45.
-    pcl::PointXYZRGBA ball;
+    osg::ref_ptr<osg::ShapeDrawable> aura = new osg::ShapeDrawable;
+    //aura->setShape(new osg::Cylinder(osg::Vec3(obj.getCentroid().x,obj.getCentroid().y,obj.getCentroid().z), obj.getWidth() + 2 , 0.5));
+    aura->setShape(new osg::Cylinder(osg::Vec3(0,0,0), 2 , 0.2));
 
-    ball.x = -ballTransf->getPosition().x()/100.f;
+    pointer->addDrawable(aura.get() );
 
-    ball.y = -ballTransf->getPosition().z()/100.f;
+    osg::Material *materiais = new osg::Material();
+    materiais->setDiffuse(osg::Material::FRONT, osg::Vec4(0.1, 1, 0.1, 1));
+    materiais->setSpecular(osg::Material::FRONT, osg::Vec4(0.0, 0.0, 0.0, 1.0));
+    materiais->setAmbient(osg::Material::FRONT, osg::Vec4(0.1, 0.1, 0.1, 1.0));
+    materiais->setEmission(osg::Material::FRONT, osg::Vec4(0.0, 0.0, 0.0, 1.0));
+    materiais->setShininess(osg::Material::FRONT, 25.0);
 
-    ball.z = -ballTransf->getPosition().y()/100.f;
+    pointer->getOrCreateStateSet()->setMode ( GL_LIGHT1, osg::StateAttribute::ON ) ;
+    pointer->getOrCreateStateSet()->setAttribute(materiais);
+    pointer->getOrCreateStateSet()->setAttributeAndModes( createPhongShaderProgram().get() );
 
-    //46.
-    pcl::PointXYZRGBA ball_view;
-
-    ball_view.x = -ballTransf->getPosition().x()/100.f;
-
-    ball_view.y = ballTransf->getPosition().z()/100.f;
-
-    ball_view.z = ballTransf->getPosition().y()/100.f;
-
-    ballPath->width++;
-
-    ballPath->push_back(ball_view);
-
-    for(double i =0; i <= 1; i += 0.02){
-
-        //47.
-        pcl::PointXYZRGBA ballNeighborPoint;
-
-        ballNeighborPoint.x = ball.x;
-
-        ballNeighborPoint.y = ball.y + i;
-	
-        ballNeighborPoint.z = ball.z;
-
-        //48.
-        kdtree->radiusSearch (ballNeighborPoint, 0.03, search_indexes, search_radiuses);
-
-        //49.
-        if (search_indexes.size() == 0){
-            *bellowpoint = false;
-        }
-        else{
-            for(int j= 0; j < search_indexes.size(); ++j) {
-                if(cloud_rotated->points[ search_indexes[j] ].y < pointy.y){
-                    pointy = cloud_rotated->points [search_indexes[j] ];
-                }
-            }
-            *bellowpoint = true;
-            break;
-        }
-    }
-    std::cout << "point found x: " << pointy.x << " " << std::endl;
-    std::cout << "point found y: " << pointy.y << " " << std::endl;
-    std::cout << "point found z: " << pointy.z << " " << std::endl;
-    isMoving = false;
-    return pointy;
+    Selectionaire ->addChild(pointer);
+    Selectionaire ->setDataVariance(osg::Object::DYNAMIC );
+    Selectionaire ->setPosition(plane_transf->getPosition());
+    Selectionaire ->setScale(osg::Vec3(0,0,0));
 }
 
 
+void createMoveQuestCircle(Object obj){
+    //Selection Sphere
+    if(!initializedQuest){
+        osg::ref_ptr<osg::Geode> pointer = new osg::Geode;
+
+        osg::ref_ptr<osg::ShapeDrawable> aura = new osg::ShapeDrawable;
+        //aura->setShape(new osg::Cylinder(osg::Vec3(obj.getCentroid().x,obj.getCentroid().y,obj.getCentroid().z), obj.getWidth() + 2 , 0.5));
+        aura->setShape(new osg::Cylinder(osg::Vec3(0,0,0), 2 , 0.2));
+
+        pointer->addDrawable(aura.get() );
+
+        osg::Material *materiais = new osg::Material();
+        materiais->setDiffuse(osg::Material::FRONT, osg::Vec4(0.1,0.1,1,1));
+        materiais->setSpecular(osg::Material::FRONT, osg::Vec4(0.0, 0.0, 0.0, 1.0));
+        materiais->setAmbient(osg::Material::FRONT, osg::Vec4(0.1, 0.1, 0.1, 1.0));
+        materiais->setEmission(osg::Material::FRONT, osg::Vec4(0.0, 0.0, 0.0, 1.0));
+        materiais->setShininess(osg::Material::FRONT, 25.0);
+
+        pointer->getOrCreateStateSet()->setMode ( GL_LIGHT1, osg::StateAttribute::ON ) ;
+        pointer->getOrCreateStateSet()->setAttribute(materiais);
+        pointer->getOrCreateStateSet()->setAttributeAndModes( createPhongShaderProgram().get() );
+
+        QuestSelect ->addChild(pointer);
+        QuestSelect ->setDataVariance(osg::Object::DYNAMIC );
+        QuestSelect ->setScale(osg::Vec3((obj.getWidth())/2,(obj.getWidth())/2, 0.9 ));
+        QuestSelect ->setPosition(osg::Vec3(-obj.getCentroid().x*100,-obj.getCentroid().z*100,-obj.getCentroid().y*100 - obj.getHeight()/2));
+        initializedQuest = true;
+    }else{
+        QuestSelect ->setScale(osg::Vec3((obj.getWidth() + 1)/2,(obj.getWidth() + 1)/2, 1 ));
+        QuestSelect ->setPosition(osg::Vec3(-obj.getCentroid().x*100,-obj.getCentroid().z*100,-obj.getCentroid().y*100 - obj.getHeight()/2));
+    }
+}
 

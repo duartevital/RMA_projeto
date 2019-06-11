@@ -1,22 +1,21 @@
 using namespace std;
 #include "Object.cpp"
 #include "TestDetails.cpp"
+#include "Controller.cpp"
 #include "Question.cpp"
 #include "Game.cpp"
-#include "Controller.cpp"
 
 int main(int argsc, char** argsv)
 {
-	// create a point cloud to keep track of the ball's path
+    // create a point cloud to keep track of the ball's path
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr ballPath (new pcl::PointCloud<pcl::PointXYZRGBA>);
     ballPath->height = 1;
 
-		
+
     //! MIGUEL STUFF
     // ball dynamics state variables
     bool collidedLeft = false, collidedRight = false, collidedFront = false, collidedBack = false, collidedBelow = false, bellowpoint = false;
     float rotation = 0;
-    pcl::PointXYZRGBA lookingForY;
     //!MIGUEL STUFF
 
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
@@ -54,8 +53,8 @@ int main(int argsc, char** argsv)
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_red (new pcl::PointCloud<pcl::PointXYZRGBA>);
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_blue (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
-    cloud_red = cloud_above_plane;
-    cloud_blue = cloud;
+    cloud_red = table_top_cloud;
+    cloud_blue = cloud_above_plane;
 
     //Setting PCL Visualizer
     pcl::visualization::PCLVisualizer *viewerPCL = new pcl::visualization::PCLVisualizer("3D Viewer");
@@ -73,8 +72,11 @@ int main(int argsc, char** argsv)
 
 
     //Setting HUD text and camera
+    Question question = getRandomQuestion();;
     osg::ref_ptr<osg::Geode> textGeode = new osg::Geode;
-    osgText::Text* question_txt = createText(osg::Vec3(50.0f, 650.0f, 0.0f), getRandomQuestion().getQuestion(), 20.0f);
+
+    osgText::Text* question_txt = createText(osg::Vec3(50.0f, 650.0f, 0.0f), question.getQuestion(), 20.0f);
+    question_txt->setDataVariance(osg::Object::DYNAMIC);
     textGeode->addDrawable(question_txt);
 
     osg::Camera* hud_camera = createHUDCamera(0, 1024, 0, 768);
@@ -97,10 +99,10 @@ int main(int argsc, char** argsv)
 
 
     //! MIGUEL STUFF
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_rotated (new pcl::PointCloud<pcl::PointXYZRGBA>);
+    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_rotated (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
-	rotatePointCloud(cloud, cloud_rotated, camera_pitch, camera_roll, camera_height);
-	
+    rotatePointCloud(cloud, cloud_rotated, camera_pitch, camera_roll, camera_height);
+
     // create a dynamic ball node alongside its shadow
     osg::ref_ptr<osg::PositionAttitudeTransform> ballTransf = new osg::PositionAttitudeTransform;
     osg::ref_ptr<osg::PositionAttitudeTransform> shadowTransf = new osg::PositionAttitudeTransform;
@@ -160,11 +162,17 @@ int main(int argsc, char** argsv)
     SelectPoint ->setDataVariance(osg::Object::DYNAMIC );
 
 
+    //creation of selection circle
+    createGeneralSelectionCircle(ballTransf);
+
+
     // force the perspective camera look at the ball and the shadow
+    camera2->addChild(Selectionaire);
     camera2->addChild( ballTransf );
     //camera2->addChild( shadowTransf );
     camera2->addChild( selectTransform );
     camera2->addChild( SelectPoint );
+    camera2->addChild(QuestSelect);
 
 
     //! MIGUEL STUFF
@@ -185,47 +193,72 @@ int main(int argsc, char** argsv)
 
 
     while (!viewerPCL->wasStopped ())
-    {        
+    {
         //! MIGUEL STUFF
 
         if(isMoving){
             lookingForY = findPointsBellow(ballPath, ballTransf, kdtree, &bellowpoint, cloud);
-            //Fazer a procura aqui
-            //if(lookingForY.y < 0)
-                isPointInObject(lookingForY);
         }
+        if(pressed_J){
+            //Fazer a procura aqui
+            Object obj = isPointInObject(lookingForY);
+            if(obj.isInitialized() && question.isCorrectObject(obj.getClusterIndice())){
+                QuestSelect ->setScale(osg::Vec3(0,0,0));
+                Selectionaire ->setScale(osg::Vec3(0,0,0));
+                question = getRandomQuestion();
+                question_txt->setText(question.getQuestion());
+                std::cout << "FOUND CORRECT OBJECT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+            }
+            pressed_J = false;
+        }
+
             osg::Vec3 planePos = ballTransf->getPosition();
             //float positionOfSelector = planePos.z() - lookingForY.y - 0.04;
 
             selectTransform->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,-30));
-            
+
             osg::Vec3d point(planePos.x(), planePos.y(),-lookingForY.y *100 + 2);
             SelectPoint->setPosition(point);
             /*SelectPoint->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,lookingForY.x * 100));
             osg::Vec3 sphereselectorPos = SelectPoint->getPosition();*/
-			//SelectPoint->setPosition(osg::Vec3(0,0,lookingForY.y));
-			
-			
+            //SelectPoint->setPosition(osg::Vec3(0,0,lookingForY.y));
+
+
             //! MIGUEL STUFF
 
 
-			pcl::ModelCoefficients cube_coeff;
-			cube_coeff.values.resize (10);
-            cube_coeff.values[0] = -SelectPoint->getPosition().x()/100.f;;
-            cube_coeff.values[1] = -SelectPoint->getPosition().z()/100.f;;
-            cube_coeff.values[2] = -SelectPoint->getPosition().y()/100.f;;
-			cube_coeff.values[3] = cube_coeff.values[4] = cube_coeff.values[5] = cube_coeff.values[6] = 0;
+            pcl::ModelCoefficients cube_coeff;
+            cube_coeff.values.resize (10);
+            cube_coeff.values[0] = -QuestSelect->getPosition().x()/100.f;;
+            cube_coeff.values[1] = -QuestSelect->getPosition().z()/100.f;;
+            cube_coeff.values[2] = -QuestSelect->getPosition().y()/100.f;;
+            cube_coeff.values[3] = cube_coeff.values[4] = cube_coeff.values[5] = cube_coeff.values[6] = 0;
             cube_coeff.values[7] = cube_coeff.values[8] = cube_coeff.values[9] = 0.03;
-			viewerPCL->removeShape("cube");
-			viewerPCL->addCube(cube_coeff, "cube");
-		
-		    viewerPCL->spinOnce (100);
+            viewerPCL->removeShape("cube");
+            viewerPCL->addCube(cube_coeff, "cube");
+
+
+        /*
+            pcl::ModelCoefficients sel_cube_coeff;
+            sel_cube_coeff.values.resize (10);
+            sel_cube_coeff.values[0] = -Selectionaire->getPosition().x()/100.f;;
+            sel_cube_coeff.values[1] = -Selectionaire->getPosition().z()/100.f;;
+            sel_cube_coeff.values[2] = -Selectionaire->getPosition().y()/100.f;;
+            sel_cube_coeff.values[3] = cube_coeff.values[4] = cube_coeff.values[5] = cube_coeff.values[6] = 0;
+            sel_cube_coeff.values[7] = cube_coeff.values[8] = cube_coeff.values[9] = 0.03;
+            viewerPCL->removeShape("sel");
+            viewerPCL->addCube(sel_cube_coeff, "sel");*/
+
+            viewerPCL->spinOnce (100);
             viewerOSG.frame();
             boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 
+            //! MIGUEL STUFF
+
+
     }
-    
+
     /*if (ballPath->size() > 0)
     {
         pcl::PCDWriter writer;

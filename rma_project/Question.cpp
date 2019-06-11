@@ -14,6 +14,7 @@ public:
     void setWidthAnswer(std::vector<Object> vec);
     void setColorAnswer(std::vector<Object> vec);
     void setTypeAnswer(std::vector<Object> vec);
+    bool isCorrectObject(int indice);
 
     //Question(int quest, Object obj_quest);
     Question(int quest, int sub_quest);
@@ -37,8 +38,6 @@ private:
 Question::Question(int quest, int sub_quest){
     this->quest = quest;
     this->sub_quest = sub_quest;
-    obj_quest = getRandomObject();
-    std::cout << "Obj Selecionado: " << obj_quest.toString() << std::endl;
 
     setQuestion();
 }
@@ -54,14 +53,20 @@ Question::Question(int quest, int sub_quest){
 Question::Question(){   }
 
 void Question::setQuestion(){
+    std:cout << "question numbeeeeeeeeeeeeeeeeeeeeeeeer = " << quest << std::endl;
     switch(quest){
         case 1:
+            obj_quest = getRandomObject();
+            createMoveQuestCircle(obj_quest);
             if(sub_quest == 1)
                 question = "Selecciona um objeto à direita do objeto pré-seleccionado.";
             else if (sub_quest == 2)
                 question = "Selecciona um objeto à esquerda do objeto pré-seleccionado.";
+            setPositionAnswer(objects_in_cloud);
             break;
         case 2:
+            obj_quest = getRandomObject();
+            createMoveQuestCircle(obj_quest);
             if(sub_quest == 1)
                 question = "Selecciona o objeto mais próximo do objeto pré-seleccionado.";
             else if (sub_quest == 2)
@@ -90,17 +95,17 @@ void Question::setQuestion(){
             setWidthAnswer(objects_in_cloud);
             break;
         case 6:
+            obj_quest = getRandomObject();
+            createMoveQuestCircle(obj_quest);
             if(sub_quest == 1)
                 question = "Seleciona um objeto mais escuro do que o objeto pré-seleccionado";
             else if (sub_quest == 2)
                 question = "Seleciona um objeto mais claro do que o objeto pré-seleccionado.";
             setColorAnswer(objects_in_cloud);
             std::cout << "\n" << std::endl;
-            for(int i=0; i<possible_answers.size(); i++){
-                std::cout << objects_in_cloud[possible_answers[i]].toString() << std::endl;
-            }
             break;
         case 7:
+            obj_quest = getRandomObject();
             std::stringstream s;
             s << "Selecciona o objeto do tipo " << obj_quest.getType();
             question = s.str();
@@ -111,7 +116,9 @@ void Question::setQuestion(){
 
 Object Question::getRandomObject(){
     int r = rand() % objects_in_cloud.size();
-    return objects_in_cloud[r];
+    Object tmp = objects_in_cloud[r];
+    std::cout << "Obj Selecionado: " << tmp.toString() << std::endl;
+    return tmp;
 }
 
 
@@ -119,7 +126,30 @@ Object Question::getRandomObject(){
 //This answer is represented by an Integer, wich corresponds to a position on objects_in_file
 
 void Question::setPositionAnswer(std::vector<Object> vec){
+    if(sub_quest == 1){
+        while(possible_answers.size() == 0){
+            for(int i=0; i<vec.size(); i++)
+                //std::cout << "\nvec[i].x = " << vec[i].x << "\obj_quest.x = " << obj_quest.x << "\n" <<std
+                if(vec[i].getCentroid().x > obj_quest.getCentroid().x){
+                    std::cout << "Objetos a direita: " << vec[i].toString() << std::endl;
+                    possible_answers.push_back(i);
+                }
 
+            if(possible_answers.size()==0){
+                obj_quest = getRandomObject();
+            }
+        }
+    }else if(sub_quest == 2){
+        while(possible_answers.size() == 0){
+            for(int i=0; i<vec.size(); i++)
+                if(vec[i].getCentroid().x < obj_quest.getCentroid().x)
+                    possible_answers.push_back(i);
+
+            if(possible_answers.size()==0){
+                obj_quest = getRandomObject();
+            }
+        }
+    }
 }
 
 void Question::setDistanceAnswer(std::vector<Object> vec){
@@ -223,7 +253,6 @@ void Question::setColorAnswer(std::vector<Object> vec){
 
             if(possible_answers.size()==0){
                 obj_quest = getRandomObject();
-                //std::cout << "Obj Selecionado: " << obj_quest.toString() << std::endl;
             }
         }
     }else if(sub_quest == 1){
@@ -234,7 +263,6 @@ void Question::setColorAnswer(std::vector<Object> vec){
 
             if(possible_answers.size()==0){
                 obj_quest = getRandomObject();
-                //std::cout << "Obj Selecionado: " << obj_quest.toString() << std::endl;
             }
         }
     }
@@ -245,4 +273,19 @@ void Question::setTypeAnswer(std::vector<Object> vec){
         if(vec[i].getType().compare(obj_quest.getType()) == 0)
             possible_answers.push_back(i);
     }
+}
+
+//Recebido o indice do objeto selecionado, verifica se este coincide com a uma das/única resposta/s correta/s
+bool Question::isCorrectObject(int indice){
+    bool check = false;
+    if(quest == 1 || quest == 6 || quest == 7){
+        for(int i=0; i<possible_answers.size(); i++){
+            if(indice == possible_answers[i])
+                check = true;
+        }
+    }else{
+        if(indice == answer)
+            check = true;
+    }
+    return check;
 }
