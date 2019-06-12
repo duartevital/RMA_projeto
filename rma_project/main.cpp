@@ -12,29 +12,23 @@ int main(int argsc, char** argsv)
     ballPath->height = 1;
 
 
-    //! MIGUEL STUFF
+
     // ball dynamics state variables
     bool collidedLeft = false, collidedRight = false, collidedFront = false, collidedBack = false, collidedBelow = false, bellowpoint = false;
     float rotation = 0;
-    //!MIGUEL STUFF
 
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
     //Load file to PointCloud
     if(pcl::io::loadPCDFile<pcl::PointXYZRGBA>(argsv[1], *cloud) == -1){
-    //if(pcl::io::loadPCDFile<pcl::PointXYZRGBA>("../clouds/treino/objecto_livro_azul.pcd", *cloud) == -1){
         PCL_ERROR ("Couldn't read file. \n");
         return(-1);
     }
-    std::cout << "Loaded " << cloud ->width * cloud ->height << " points" <<std::endl;
 
-    //! MIGUEL STUFF
     double camera_pitch, camera_roll, camera_height;
     estimateCameraPose(cloud, &camera_pitch, &camera_roll, &camera_height);
-    //! MIGUEL STUFF
 
 
 
-    //! MIGUEL STUFF
     // go through the point cloud and generate a RGB image and a range image
     int size = cloud->height*cloud->width*3;
     unsigned char* data = (unsigned char*)calloc(size,sizeof(unsigned char));
@@ -43,7 +37,7 @@ int main(int argsc, char** argsv)
     // create a texture from the RGB image and use depth data to fill the z-buffer
     osg::ref_ptr<osg::Geode> orthoTextureGeode = new osg::Geode;
     createOrthoTexture(orthoTextureGeode, data, dataDepth, cloud->width, cloud->height);
-    //! MIGUEL STUFF
+
 
 
     analyze(cloud);
@@ -94,12 +88,12 @@ int main(int argsc, char** argsv)
     hud_camera->addChild(scoreGeode.get());
     hud_camera->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
-    //! MIGUEL STUFF
+
     // create an orthographic camera imaging the texture and a perspective camera based on the camera's pose and intrinsics
     osg::ref_ptr<osg::Camera> camera1 = new osg::Camera;
     osg::ref_ptr<osg::Camera> camera2 = new osg::Camera;
     createVirtualCameras(camera1, camera2, orthoTextureGeode, camera_pitch, camera_roll, camera_height);
-    //! MIGUEL STUFF
+
 
 
     //Setting OSG Visualizer
@@ -109,7 +103,7 @@ int main(int argsc, char** argsv)
     root->addChild( hud_camera);
 
 
-    //! MIGUEL STUFF
+
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_rotated (new pcl::PointCloud<pcl::PointXYZRGBA>);
 
     rotatePointCloud(cloud, cloud_rotated, camera_pitch, camera_roll, camera_height);
@@ -178,15 +172,14 @@ int main(int argsc, char** argsv)
 
 
     // force the perspective camera look at the ball and the shadow
-    camera2->addChild(Selectionaire);
     camera2->addChild( ballTransf );
-    //camera2->addChild( shadowTransf );
+    camera2->addChild(Selectionaire);
     camera2->addChild( selectTransform );
     camera2->addChild( SelectPoint );
     camera2->addChild(QuestSelect);
 
 
-    //! MIGUEL STUFF
+
 
 
     osgViewer::Viewer viewerOSG;
@@ -194,18 +187,18 @@ int main(int argsc, char** argsv)
     viewerOSG.setSceneData( root.get() );
 
 
-    //! MIGUEL STUFF
+
 
     viewerOSG.addEventHandler( ctrler.get() );
 
     pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr kdtree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
     kdtree->setInputCloud (cloud);
-    //! MIGUEL STUFF
+
 
 
     while (!viewerPCL->wasStopped ())
     {
-        //! MIGUEL STUFF
+
 
         if(isMoving){
             lookingForY = findPointsBellow(ballPath, ballTransf, kdtree, &bellowpoint, cloud);
@@ -222,62 +215,35 @@ int main(int argsc, char** argsv)
                 std::stringstream new_score_stream;
                 new_score_stream << score_str << score;
                 score_txt->setText(new_score_stream.str());
-                std::cout << "FOUND CORRECT OBJECT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+                std::cout << "FOUND CORRECT OBJECT !!" << std::endl;
             }
             pressed_J = false;
         }
 
             osg::Vec3 planePos = ballTransf->getPosition();
-            //float positionOfSelector = planePos.z() - lookingForY.y - 0.04;
 
             selectTransform->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,-30));
 
             osg::Vec3d point(planePos.x(), planePos.y(),-lookingForY.y *100 + 2);
             SelectPoint->setPosition(point);
-            /*SelectPoint->setPosition(ballTransf->getPosition() + osg::Vec3(0,0,lookingForY.x * 100));
-            osg::Vec3 sphereselectorPos = SelectPoint->getPosition();*/
-            //SelectPoint->setPosition(osg::Vec3(0,0,lookingForY.y));
 
-
-            //! MIGUEL STUFF
 
 
             pcl::ModelCoefficients cube_coeff;
             cube_coeff.values.resize (10);
-            cube_coeff.values[0] = -QuestSelect->getPosition().x()/100.f;;
-            cube_coeff.values[1] = -QuestSelect->getPosition().z()/100.f;;
-            cube_coeff.values[2] = -QuestSelect->getPosition().y()/100.f;;
+            cube_coeff.values[0] = -ballTransf->getPosition().x()/100.f;;
+            cube_coeff.values[1] = -ballTransf->getPosition().z()/100.f;;
+            cube_coeff.values[2] = -ballTransf->getPosition().y()/100.f;;
             cube_coeff.values[3] = cube_coeff.values[4] = cube_coeff.values[5] = cube_coeff.values[6] = 0;
             cube_coeff.values[7] = cube_coeff.values[8] = cube_coeff.values[9] = 0.03;
             viewerPCL->removeShape("cube");
             viewerPCL->addCube(cube_coeff, "cube");
-
-
-        /*
-            pcl::ModelCoefficients sel_cube_coeff;
-            sel_cube_coeff.values.resize (10);
-            sel_cube_coeff.values[0] = -Selectionaire->getPosition().x()/100.f;;
-            sel_cube_coeff.values[1] = -Selectionaire->getPosition().z()/100.f;;
-            sel_cube_coeff.values[2] = -Selectionaire->getPosition().y()/100.f;;
-            sel_cube_coeff.values[3] = cube_coeff.values[4] = cube_coeff.values[5] = cube_coeff.values[6] = 0;
-            sel_cube_coeff.values[7] = cube_coeff.values[8] = cube_coeff.values[9] = 0.03;
-            viewerPCL->removeShape("sel");
-            viewerPCL->addCube(sel_cube_coeff, "sel");*/
 
             viewerPCL->spinOnce (100);
             viewerOSG.frame();
             boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 
-            //! MIGUEL STUFF
-
-
     }
-
-    /*if (ballPath->size() > 0)
-    {
-        pcl::PCDWriter writer;
-        writer.write<pcl::PointXYZRGBA> ("Out/ball_path.pcd", *ballPath, false);
-    }*/
 }
 

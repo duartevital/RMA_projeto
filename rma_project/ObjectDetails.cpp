@@ -75,37 +75,6 @@ void filterOutliers(){
     pass.setFilterLimits(-0.1, 1.4);
     pass.filter(*cloud);
 
-    /*pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
-    tree->setInputCloud(cloud);
-    std::vector<pcl::PointIndices> indices;
-    pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
-    ec.setClusterTolerance(0.03);
-    ec.setMinClusterSize(1000);
-    ec.setMaxClusterSize(20000);
-    ec.setSearchMethod(tree);
-    ec.setInputCloud(cloud);
-    ec.extract(indices);
-    int max_size = 0;
-    std::cout << "number =  " << n << std::endl;
-    for(int i=0; i<indices.size(); i++){
-        pcl::PointCloud<pcl::PointXYZRGBA>::Ptr tmp_cloud (new pcl::PointCloud<pcl::PointXYZRGBA>);
-
-        std::cout << "indexcdcec  " << indices[i].indices.size() << std::endl;
-        for(int j=0; j<indices[i].indices.size(); j++){
-            tmp_cloud->points.push_back(cloud->points[indices[i].indices[j]]);
-            n++;
-            //std::cout << "valores" << j <<" =  " << indices[i].indices[j] << std::endl;
-        }
-
-        tmp_cloud->width = tmp_cloud->points.size();
-        tmp_cloud->height = 1;
-        tmp_cloud->is_dense = true;
-        if(tmp_cloud->size() > max_size){
-            max_size = tmp_cloud->size();
-            cloud = tmp_cloud;
-        }
-    }*/
-
     //Remoção de outliers
     pcl::RadiusOutlierRemoval<pcl::PointXYZRGBA> sor;
     sor.setInputCloud(cloud);

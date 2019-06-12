@@ -139,10 +139,6 @@ Object isPointInObject(pcl::PointXYZRGBA p){
             }
         }
     }
-    if(!obj.isInitialized())
-        std::cout << "Object NOT found..." << std::endl;
-    else
-        std::cout << "FOUND object: " << obj.toString() << std::endl;
 
     return obj;
 }
@@ -382,8 +378,5 @@ void analyze(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr arg_cloud){
     getObjectsDetails();
 
     setObjectType();
-
-    for(int i=0; i<objects_in_cloud.size(); i++)
-        std::cout << objects_in_cloud[i].toString() << std::endl;
 
 }

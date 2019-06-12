@@ -53,31 +53,30 @@ Question::Question(int quest, int sub_quest){
 Question::Question(){   }
 
 void Question::setQuestion(){
-    std:cout << "question numbeeeeeeeeeeeeeeeeeeeeeeeer = " << quest << std::endl;
     switch(quest){
         case 1:
             obj_quest = getRandomObject();
             createMoveQuestCircle(obj_quest);
             if(sub_quest == 1)
-                question = "Selecciona um objeto à direita do objeto pré-seleccionado.";
+                question = "Selecciona um objeto a direita do objeto pre-seleccionado.";
             else if (sub_quest == 2)
-                question = "Selecciona um objeto à esquerda do objeto pré-seleccionado.";
+                question = "Selecciona um objeto a esquerda do objeto pre-seleccionado.";
             setPositionAnswer(objects_in_cloud);
             break;
         case 2:
             obj_quest = getRandomObject();
             createMoveQuestCircle(obj_quest);
             if(sub_quest == 1)
-                question = "Selecciona o objeto mais próximo do objeto pré-seleccionado.";
+                question = "Selecciona o objeto mais proximo do objeto pre-seleccionado.";
             else if (sub_quest == 2)
-                question = "Selecciona o objeto mais afastado do objeto pré-seleccionado.";
+                question = "Selecciona o objeto mais afastado do objeto pre-seleccionado.";
             setDistanceAnswer(objects_in_cloud);
             break;
         case 3:
             if(sub_quest == 1)
-                question = "Selecciona o objeto com maior superfície.";
+                question = "Selecciona o objeto com maior superficie.";
             else if (sub_quest == 2)
-                question = "Selecciona o objeto com menor superfície.";
+                question = "Selecciona o objeto com menor superficie.";
             setAreaAnswer(objects_in_cloud);
             break;
         case 4:
@@ -98,11 +97,10 @@ void Question::setQuestion(){
             obj_quest = getRandomObject();
             createMoveQuestCircle(obj_quest);
             if(sub_quest == 1)
-                question = "Seleciona um objeto mais escuro do que o objeto pré-seleccionado";
+                question = "Seleciona um objeto mais escuro do que o objeto pre-seleccionado";
             else if (sub_quest == 2)
-                question = "Seleciona um objeto mais claro do que o objeto pré-seleccionado.";
+                question = "Seleciona um objeto mais claro do que o objeto pre-seleccionado.";
             setColorAnswer(objects_in_cloud);
-            std::cout << "\n" << std::endl;
             break;
         case 7:
             obj_quest = getRandomObject();
@@ -117,7 +115,6 @@ void Question::setQuestion(){
 Object Question::getRandomObject(){
     int r = rand() % objects_in_cloud.size();
     Object tmp = objects_in_cloud[r];
-    std::cout << "Obj Selecionado: " << tmp.toString() << std::endl;
     return tmp;
 }
 
@@ -129,9 +126,7 @@ void Question::setPositionAnswer(std::vector<Object> vec){
     if(sub_quest == 1){
         while(possible_answers.size() == 0){
             for(int i=0; i<vec.size(); i++)
-                //std::cout << "\nvec[i].x = " << vec[i].x << "\obj_quest.x = " << obj_quest.x << "\n" <<std
                 if(vec[i].getCentroid().x > obj_quest.getCentroid().x){
-                    std::cout << "Objetos a direita: " << vec[i].toString() << std::endl;
                     possible_answers.push_back(i);
                 }
 
